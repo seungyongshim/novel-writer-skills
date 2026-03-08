@@ -1,285 +1,284 @@
-# Novel Writer Skills 入门指南
+﻿# Novel Writer Skills 입문 가이드
 
-欢迎使用 **Novel Writer Skills** - 专为 Claude Code 设计的 AI 小说创作工具！
+**Novel Writer Skills**에 오신 것을 환영합니다 - Claude Code를 위해 설계된 AI 소설 창작 도구입니다!
 
-## 快速开始
+## 빠른 시작
 
-### 1. 安装
+### 1. 설치
 
 ```bash
 npm install -g novel-writer-skills
 ```
 
-### 2. 创建你的第一个项目
+### 2. 첫 번째 프로젝트 만들기
 
 ```bash
-# 创建新项目
+# 새 프로젝트 생성
 novelwrite init my-first-novel
 
-# 进入项目目录
+# 프로젝트 디렉토리로 이동
 cd my-first-novel
 ```
 
-### 3. 在 Claude Code 中打开
+### 3. Claude Code에서 열기
 
-在 Claude Code 中打开项目文件夹，你将看到：
+Claude Code에서 프로젝트 폴더를 열면 다음을 볼 수 있습니다:
 
 ```
 my-first-novel/
 ├── .claude/
-│   ├── commands/      # 13 个斜杠命令
-│   └── skills/        # 7 个 Agent Skills
+│   ├── commands/      # 13개의 Slash 명령
+│   └── skills/        # 7개의 Agent Skills
 ├── .specify/
 ├── stories/
 └── spec/
 ```
 
-## 七步创作流程
+## 7단계 창작 프로세스
 
-### 第一步：创建创作宪法
+### 1단계: 창작 헌법 만들기
 
-在 Claude Code 中输入：
+Claude Code에서 입력:
 
 ```
 /constitution
 ```
 
-这将引导你定义：
-- ✅ 核心创作原则
-- ✅ 质量标准
-- ✅ 风格偏好
-- ✅ 内容规范
+다음을 정의하도록 안내합니다:
+- ✅ 핵심 창작 원칙
+- ✅ 품질 기준
+- ✅ 스타일 선호
+- ✅ 콘텐츠 규범
 
-**预计时间**：15-20 分钟
+**예상 시간**: 15-20분
 
-### 第二步：定义故事规格
+### 2단계: 스토리 규격 정의
 
 ```
 /specify
 ```
 
-明确你的故事：
-- 📖 一句话概括
-- 👥 目标读者
-- ⚔️ 核心冲突
-- 👤 主要角色
-- 🎯 成功标准
+스토리를 명확히 합니다:
+- 📖 한 줄 요약
+- 👥 타겟 독자
+- ⚔️ 핵심 갈등
+- 👤 주요 캐릭터
+- 🎯 성공 기준
 
-**预计时间**：30-45 分钟
+**예상 시간**: 30-45분
 
-### 第三步：澄清模糊点
+### 3단계: 모호한 점 명확화
 
 ```
 /clarify
 ```
 
-AI 会通过 5 个关键问题帮你：
-- ❓ 识别规格中的模糊点
-- 💡 做出清晰决策
-- 📝 自动更新规格文档
+AI가 5가지 핵심 질문으로 도와줍니다:
+- ❓ 규격의 모호한 점 식별
+- 💡 명확한 결정 내리기
+- 📝 규격 문서 자동 업데이트
 
-**预计时间**：10-15 分钟
+**예상 시간**: 10-15분
 
-### 第四步：制定创作计划
+### 4단계: 창작 계획 수립
 
 ```
 /plan
 ```
 
-设计具体实现方案：
-- 📚 章节结构
-- 📈 节奏分布
-- 🎭 角色弧线
-- 🔮 伏笔计划
+구체적인 실행 방안을 설계합니다:
+- 📚 챕터 구성
+- 📈 페이스 분배
+- 🎭 캐릭터 아크
+- 🔮 복선 계획
 
-**预计时间**：45-60 分钟
+**예상 시간**: 45-60분
 
-### 第五步：分解任务清单
+### 5단계: 작업 목록 분해
 
 ```
 /tasks
 ```
 
-生成可执行任务：
-- ✅ 按优先级排序
-- 🔗 标明依赖关系
-- ⏱️ 估算工作量
+실행 가능한 작업을 생성합니다:
+- ✅ 우선순위별 정렬
+- 🔗 의존 관계 표시
+- ⏱️ 작업량 추정
 
-**预计时间**：20-30 分钟
+**예상 시간**: 20-30분
 
-### 第六步：开始写作
+### 6단계: 글쓰기 시작
 
 ```
 /write
 ```
 
-AI 辅助创作：
-- 🤖 根据规格和计划生成内容
-- 🎨 自动应用类型知识
-- 🔍 后台一致性检查
-- ⚡ 实时写作技巧应用
+AI 보조 창작:
+- 🤖 규격과 계획에 따라 내용 생성
+- 🎨 장르 지식 자동 적용
+- 🔍 백그라운드 일관성 검사
+- ⚡ 실시간 글쓰기 기법 적용
 
-**建议节奏**：每次 1-2 章，每 3-5 章停下来分析
+**권장 페이스**: 한 번에 1-2챕터, 3-5챕터마다 멈추고 분석
 
-### 第七步：质量验证
+### 7단계: 품질 검증
 
 ```
 /analyze
 ```
 
-全面质量检查：
-- ✅ 宪法合规性
-- ✅ 规格满足度
-- ✅ 内容一致性
-- ✅ 质量标准达成
+전면 품질 검사:
+- ✅ 헌법 준수 여부
+- ✅ 규격 충족도
+- ✅ 콘텐츠 일관성
+- ✅ 품질 기준 달성
 
-**建议频率**：每 5 章运行一次
+**권장 주기**: 5챕터마다 실행
 
-## Agent Skills 自动激活
+## Agent Skills 자동 활성화
 
-### 无需手动调用
+### 수동 호출 불필요
 
-当你创作时，相关 Skills 会**自动激活**：
+창작 시, 관련 Skills가 **자동으로 활성화**됩니다:
 
-**类型知识**：
-- 提到"言情" → Romance Skill 激活
-- 提到"悬疑" → Mystery Skill 激活
-- 提到"奇幻" → Fantasy Skill 激活
+**장르 지식**:
+- "로맨스" 언급 → Romance Skill 활성화
+- "미스터리" 언급 → Mystery Skill 활성화
+- "판타지" 언급 → Fantasy Skill 활성화
 
-**写作技巧**：
-- 写对话时 → Dialogue Techniques 激活
-- 写场景时 → Scene Structure 激活
+**글쓰기 기법**:
+- 대화 작성 시 → Dialogue Techniques 활성화
+- 장면 작성 시 → Scene Structure 활성화
 
-**质量保证**：
-- 写作过程中 → Consistency Checker 后台监控
-- 整个流程中 → Workflow Guide 保持活跃
+**품질 보증**:
+- 글쓰기 과정 중 → Consistency Checker 백그라운드 모니터링
+- 전체 프로세스 → Workflow Guide 활성 유지
 
-### 主动提醒
+### 능동적 알림
 
-Skills 会在检测到问题时主动提醒：
+Skills는 문제를 감지하면 능동적으로 알립니다:
 
 ```
-⚠️ 一致性检查警报
+⚠️ 일관성 검사 알림
 
-问题：角色特征不匹配
-位置：第 5 章，第 3 段
+문제: 캐릭터 특성 불일치
+위치: 제5장, 제3단락
 
-当前文本："玛丽的绿色眼睛..."
-已建立特征："眼睛颜色：蓝色"
+현재 텍스트: "메리의 초록색 눈..."
+확립된 특성: "눈 색상: 파란색"
 
-你想让我修复吗？
+수정할까요?
 ```
 
-## 追踪与验证命令
+## 추적 및 검증 명령
 
-### 初始化追踪系统
+### 추적 시스템 초기화
 
 ```
 /track-init
 ```
 
-首次使用，创建追踪文件。
+최초 사용 시, 추적 파일을 생성합니다.
 
-### 综合追踪
+### 종합 추적
 
 ```
 /track
 ```
 
-每完成一章后运行，更新：
-- 📊 情节追踪
-- ⏰ 时间线
-- 👥 角色关系
-- 🌍 世界观状态
+챕터 완료 후 실행하여 업데이트합니다:
+- 📊 플롯 추적
+- ⏰ 타임라인
+- 👥 캐릭터 관계
+- 🌍 세계관 상태
 
-### 专项检查
+### 전문 검사
 
 ```
-/plot-check   # 情节一致性
-/timeline     # 时间线管理
-/relations    # 角色关系
-/world-check  # 世界观验证
+/plot-check   # 플롯 일관성
+/timeline     # 타임라인 관리
+/relations    # 캐릭터 관계
+/world-check  # 세계관 검증
 ```
 
-## 插件系统
+## 플러그인 시스템
 
-### 查看已安装插件
+### 설치된 플러그인 확인
 
 ```bash
 novelwrite plugin:list
 ```
 
-### 安装插件
+### 플러그인 설치
 
 ```bash
 novelwrite plugin:add authentic-voice
 ```
 
-### 移除插件
+### 플러그인 제거
 
 ```bash
 novelwrite plugin:remove authentic-voice
 ```
 
-### 官方插件
+### 공식 플러그인
 
-- **authentic-voice**：真实人声写作插件，提升原创度
+- **authentic-voice**: 진정한 인간 목소리 글쓰기 플러그인, 독창성 향상
 
-## 常见问题
+## 자주 묻는 질문
 
-### Q: 我可以跳过某些步骤吗？
+### Q: 일부 단계를 건너뛸 수 있나요?
 
-A: 可以，但有些命令相互依赖：
-- `/write` 需要 `/specify` 和 `/plan`
-- 最小流程：`/constitution` → `/specify` → `/write`
+A: 가능합니다. 하지만 일부 명령은 상호 의존합니다:
+- `/write`는 `/specify`와 `/plan`이 필요
+- 최소 프로세스: `/constitution` → `/specify` → `/write`
 
-### Q: Skills 会不会干扰我的创作？
+### Q: Skills가 창작을 방해하지 않나요?
 
-A: 不会！Skills 是**被动的**：
-- 只在相关时激活
-- 提供建议而非强制
-- 你始终有最终决定权
+A: 아닙니다! Skills는 **수동적**입니다:
+- 관련 있을 때만 활성화
+- 제안하되 강제하지 않음
+- 최종 결정권은 항상 당신에게
 
-### Q: 如何调整一致性检查的严格度？
+### Q: 일관성 검사의 엄격도를 어떻게 조정하나요?
 
-A: 在对话中告诉 AI：
+A: 대화에서 AI에게 말하세요:
 ```
-"请使用灵活模式进行一致性检查，
-因为这是奇幻小说。"
+"판타지 소설이라 유연 모드로
+일관성 검사를 해주세요."
 ```
 
-### Q: 我已经有大纲了，怎么办？
+### Q: 이미 아웃라인이 있는데 어떻게 하나요?
 
-A: 使用 `/specify` 将现有大纲转换为 novelwrite 格式，
-然后继续后续步骤。
+A: `/specify`를 사용하여 기존 아웃라인을 novelwrite 형식으로 변환한 후,
+이후 단계를 계속하세요.
 
-## 下一步
+## 다음 단계
 
-### 深入学习
+### 심화 학습
 
-- 📖 [命令详解](commands.md) - 所有命令的详细说明
-- 🎨 [Skills 指南](skills-guide.md) - Skills 工作原理
-- 🔌 [插件开发](plugin-development.md) - 创建自己的插件
+- 📖 [명령 상세](commands.md) - 모든 명령의 상세 설명
+- 🎨 [Skills 가이드](skills-guide.md) - Skills 작동 원리
+- 🔌 [플러그인 개발](plugin-development.md) - 직접 플러그인 만들기
 
-### 示例项目
+### 예제 프로젝트
 
-查看 `examples/` 目录中的示例项目，了解完整工作流。
+`examples/` 디렉토리의 예제 프로젝트에서 전체 워크플로우를 확인하세요.
 
-### 社区支持
+### 커뮤니티 지원
 
-- 💬 GitHub Discussions：https://github.com/wordflowlab/novel-writer-skills/discussions
-- 🐛 Bug 报告：https://github.com/wordflowlab/novel-writer-skills/issues
-- 📧 邮件支持：support@wordflowlab.com
+- 💬 GitHub Discussions: https://github.com/wordflowlab/novel-writer-skills/discussions
+- 🐛 Bug 보고: https://github.com/wordflowlab/novel-writer-skills/issues
+- 📧 이메일 지원: support@wordflowlab.com
 
 ---
 
-**准备好了吗？** 创建你的第一个项目，开始你的小说创作之旅！
+**준비되셨나요?** 첫 번째 프로젝트를 만들고 소설 창작 여정을 시작하세요!
 
 ```bash
 novelwrite init my-amazing-novel
 cd my-amazing-novel
-# 在 Claude Code 中打开，输入 /constitution 开始
+# Claude Code에서 열고, /constitution을 입력하여 시작
 ```
 
-祝创作愉快！ ✨📚
-
+즐거운 창작 되세요! ✨📚

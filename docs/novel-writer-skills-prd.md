@@ -1,43 +1,43 @@
-# Novel Writer Skills 产品需求文档
+﻿# Novel Writer Skills 제품 요구사항 문서
 
-**版本**: v1.0  
-**日期**: 2025-10-18  
-**状态**: Draft
-
----
-
-## 1. 产品定位
-
-### 1.1 项目概述
-
-**novel-writer-skills** 是专为 **Claude Code** 设计的 AI 小说创作工具，深度集成 Claude 的 Slash Commands 和 Agent Skills 系统。
-
-- **技术栈**：Claude Code 专用
-- **核心能力**：七步方法论 + Agent Skills 智能辅助
-- **目标用户**：使用 Claude Code 进行小说创作的作者
-
-### 1.2 与 novel-writer 的关系
-
-- **novel-writer**：跨平台（13个AI工具），基础方法论
-- **novel-writer-skills**：Claude Code 专用，深度增强
-
-**共享**：七步方法论、文件结构、追踪系统
-**差异**：移除跨平台支持，新增 Agent Skills 智能系统
+**버전**: v1.0  
+**날짜**: 2025-10-18  
+**상태**: Draft
 
 ---
 
-## 2. 核心架构
+## 1. 제품 포지셔닝
 
-### 2.1 技术组件
+### 1.1 프로젝트 개요
 
-| 组件 | 说明 |
-|------|------|
-| **Slash Commands** | Claude Code 斜杠命令，用户主动调用 |
-| **Agent Skills** | AI 自动激活的知识库和检查系统 |
-| **CLI 工具** | 项目初始化和管理（`novel-skills` 命令） |
-| **插件系统** | 可扩展的功能模块 |
+**novel-writer-skills**는 **Claude Code** 전용으로 설계된 AI 소설 창작 도구로, Claude의 Slash Commands와 Agent Skills 시스템에 심층 통합됩니다.
 
-### 2.2 项目结构
+- **기술 스택**: Claude Code 전용
+- **핵심 역량**: 7단계 방법론 + Agent Skills 스마트 보조
+- **대상 사용자**: Claude Code를 사용하여 소설을 창작하는 작가
+
+### 1.2 novel-writer와의 관계
+
+- **novel-writer**: 크로스 플랫폼 (13개 AI 도구), 기본 방법론
+- **novel-writer-skills**: Claude Code 전용, 심층 강화
+
+**공유**: 7단계 방법론, 파일 구조, 추적 시스템
+**차이**: 크로스 플랫폼 지원 제거, Agent Skills 스마트 시스템 추가
+
+---
+
+## 2. 핵심 아키텍처
+
+### 2.1 기술 구성요소
+
+| 구성요소 | 설명 |
+|---------|------|
+| **Slash Commands** | Claude Code 슬래시 명령, 사용자 능동 호출 |
+| **Agent Skills** | AI 자동 활성화 지식 라이브러리 및 검사 시스템 |
+| **CLI 도구** | 프로젝트 초기화 및 관리 (`novel-skills` 명령) |
+| **플러그인 시스템** | 확장 가능한 기능 모듈 |
+
+### 2.2 프로젝트 구조
 
 ```
 novel-writer-skills/
@@ -50,28 +50,28 @@ novel-writer-skills/
 │   │   ├── tasks.md
 │   │   ├── write.md
 │   │   ├── analyze.md
-│   │   └── [追踪命令...]
+│   │   └── [추적 명령...]
 │   │
 │   └── skills/                # Agent Skills
-│       ├── genre-knowledge/   # 类型知识库
-│       ├── writing-techniques/ # 写作技巧
-│       └── quality-assurance/ # 智能检查
+│       ├── genre-knowledge/   # 장르 지식 라이브러리
+│       ├── writing-techniques/ # 글쓰기 기법
+│       └── quality-assurance/ # 스마트 검사
 │
-├── src/                       # CLI 源代码
+├── src/                       # CLI 소스 코드
 │   ├── cli.ts
 │   ├── init.ts
 │   └── utils/
 │
-├── templates/                 # 项目模板
+├── templates/                 # 프로젝트 템플릿
 │   ├── project-template/
 │   └── plugin-template/
 │
-├── plugins/                   # 官方插件
+├── plugins/                   # 공식 플러그인
 │   ├── authentic-voice/
 │   ├── translate/
-│   └── [其他插件...]
+│   └── [기타 플러그인...]
 │
-├── docs/                      # 文档
+├── docs/                      # 문서
 │   ├── getting-started.md
 │   ├── commands.md
 │   └── skills-guide.md
@@ -83,165 +83,165 @@ novel-writer-skills/
 
 ---
 
-## 3. 核心功能
+## 3. 핵심 기능
 
-### 3.1 Slash Commands（用户主动调用）
+### 3.1 Slash Commands (사용자 능동 호출)
 
-#### 七步方法论命令
+#### 7단계 방법론 명령
 
-| 命令 | 功能 | 输出 |
+| 명령 | 기능 | 출력 |
 |------|------|------|
-| `/constitution` | 创建创作宪法 | `.specify/memory/constitution.md` |
-| `/specify` | 定义故事规格 | `stories/[name]/specification.md` |
-| `/clarify` | 澄清模糊点（5个问题） | 更新 specification.md |
-| `/plan` | 制定创作计划 | `stories/[name]/creative-plan.md` |
-| `/tasks` | 分解任务清单 | `stories/[name]/tasks.md` |
-| `/write` | 执行章节写作 | `stories/[name]/content/chapter-XX.md` |
-| `/analyze` | 质量验证分析 | 分析报告（双模式：框架/内容） |
+| `/constitution` | 창작 헌법 작성 | `.specify/memory/constitution.md` |
+| `/specify` | 스토리 규격 정의 | `stories/[name]/specification.md` |
+| `/clarify` | 모호한 점 명확화 (5개 질문) | specification.md 업데이트 |
+| `/plan` | 창작 계획 수립 | `stories/[name]/creative-plan.md` |
+| `/tasks` | 작업 목록 분해 | `stories/[name]/tasks.md` |
+| `/write` | 챕터 작성 실행 | `stories/[name]/content/chapter-XX.md` |
+| `/analyze` | 품질 검증 분석 | 분석 보고서 (이중 모드: 프레임워크/콘텐츠) |
 
-#### 追踪与验证命令
+#### 추적 및 검증 명령
 
-| 命令 | 功能 |
+| 명령 | 기능 |
 |------|------|
-| `/track-init` | 初始化追踪系统 |
-| `/track` | 综合追踪更新 |
-| `/plot-check` | 情节一致性检查 |
-| `/timeline` | 时间线管理 |
-| `/relations` | 角色关系追踪 |
-| `/world-check` | 世界观验证 |
-| `/checklist` | 质量检查清单 |
+| `/track-init` | 추적 시스템 초기화 |
+| `/track` | 종합 추적 업데이트 |
+| `/plot-check` | 플롯 일관성 검사 |
+| `/timeline` | 타임라인 관리 |
+| `/relations` | 캐릭터 관계 추적 |
+| `/world-check` | 세계관 검증 |
+| `/checklist` | 품질 체크리스트 |
 
-### 3.2 Agent Skills（AI 自动激活）
+### 3.2 Agent Skills (AI 자동 활성화)
 
-#### Skills 设计原则
+#### Skills 설계 원칙
 
-- **被动激活**：AI 根据上下文自动判断
-- **无感知**：用户无需手动调用
-- **持续应用**：在整个对话中保持活跃
+- **수동 활성화**: AI가 맥락에 따라 자동 판단
+- **무인지**: 사용자의 수동 호출 불필요
+- **지속 적용**: 전체 대화에서 활성 유지
 
-#### Skills 分类
+#### Skills 분류
 
-**1. Genre Knowledge Skills（类型知识库）**
+**1. Genre Knowledge Skills (장르 지식 라이브러리)**
 
-根据小说类型自动提供创作惯例和技巧：
+소설 장르에 따라 창작 관례와 기법을 자동 제공:
 
-- `romance.md` - 言情小说惯例
-- `mystery.md` - 推理悬疑技巧
-- `fantasy.md` - 奇幻设定规范
-- `sci-fi.md` - 科幻世界构建
-- `thriller.md` - 惊悚节奏控制
+- `romance.md` - 로맨스 소설 관례
+- `mystery.md` - 추리 미스터리 기법
+- `fantasy.md` - 판타지 설정 규범
+- `sci-fi.md` - SF 세계 구축
+- `thriller.md` - 스릴러 리듬 제어
 
-**触发示例**：用户说"我要写言情小说" → romance skill 自动激活
+**트리거 예시**: 사용자가 "로맨스 소설을 쓰겠다"고 말하면 → romance skill 자동 활성화
 
-**2. Writing Techniques Skills（写作技巧）**
+**2. Writing Techniques Skills (글쓰기 기법)**
 
-在特定创作场景自动应用最佳实践：
+특정 창작 장면에서 모범 사례를 자동 적용:
 
-- `dialogue-techniques.md` - 对话自然度
-- `scene-structure.md` - 场景构建
-- `character-arc.md` - 角色弧线
-- `pacing-control.md` - 节奏把控
-- `description-depth.md` - 描写层次
+- `dialogue-techniques.md` - 대화 자연스러움
+- `scene-structure.md` - 장면 구축
+- `character-arc.md` - 캐릭터 아크
+- `pacing-control.md` - 리듬 조절
+- `description-depth.md` - 묘사 깊이
 
-**触发示例**：写对话场景时 → dialogue-techniques 自动激活
+**트리거 예시**: 대화 장면 작성 시 → dialogue-techniques 자동 활성화
 
-**3. Quality Assurance Skills（智能检查）**
+**3. Quality Assurance Skills (스마트 검사)**
 
-写作过程中自动监控和提醒：
+글쓰기 과정에서 자동 모니터링 및 알림:
 
-- `consistency-checker.md` - 一致性检查（角色、世界观、时间线）
-- `pov-validator.md` - 视角验证
-- `continuity-tracker.md` - 连续性追踪
-- `pacing-monitor.md` - 节奏监控
+- `consistency-checker.md` - 일관성 검사 (캐릭터, 세계관, 타임라인)
+- `pov-validator.md` - 시점 검증
+- `continuity-tracker.md` - 연속성 추적
+- `pacing-monitor.md` - 리듬 모니터링
 
-**触发示例**：写作中检测到矛盾 → 自动警告提示
+**트리거 예시**: 글쓰기 중 모순 감지 → 자동 경고 표시
 
-### 3.3 Skills 与 Commands 协同
+### 3.3 Skills와 Commands 협업
 
 ```
-用户：我要写一部言情小说
+사용자: 로맨스 소설을 쓰고 싶어요
 
-[Skills 激活]
-✓ romance-novel-conventions (类型知识)
-✓ workflow-guide (引导使用七步方法论)
+[Skills 활성화]
+✓ romance-novel-conventions (장르 지식)
+✓ workflow-guide (7단계 방법론 안내)
 
-AI 回复：
-"很好！让我们用系统化的方法创作。首先执行 /constitution 
-定义你的创作原则，然后 /specify 明确故事规格..."
+AI 응답:
+"좋습니다! 체계적인 방법으로 창작합시다. 먼저 /constitution을
+실행하여 창작 원칙을 정의하고, /specify로 스토리 규격을 명확히..."
 
-[在后续创作中]
-✓ 执行 /write → dialogue-techniques 自动激活
-✓ 写作过程 → consistency-checker 后台监控
-✓ 发现问题 → 主动提醒用户
+[후속 창작에서]
+✓ /write 실행 → dialogue-techniques 자동 활성화
+✓ 글쓰기 과정 → consistency-checker 백그라운드 모니터링
+✓ 문제 발견 → 사용자에게 능동적 알림
 ```
 
 ---
 
-## 4. 技术规范
+## 4. 기술 사양
 
-### 4.1 Slash Command 格式
+### 4.1 Slash Command 형식
 
 ```markdown
 ---
-description: 命令的简短描述（一句话）
+description: 명령의 짧은 설명 (한 문장)
 ---
 
-# 命令标题
+# 명령 제목
 
-## 目标
-[命令要达成什么]
+## 목표
+[명령이 달성해야 할 것]
 
-## 流程
-[步骤说明]
+## 프로세스
+[단계 설명]
 
-## 输出
-[生成什么文件]
+## 출력
+[어떤 파일을 생성하는지]
 
-## 示例
-[使用示例]
+## 예시
+[사용 예시]
 ```
 
-### 4.2 Agent Skill 格式
+### 4.2 Agent Skill 형식
 
 ```yaml
 ---
 name: skill-identifier
-description: "Use when [触发条件] - [功能说明]"
+description: "Use when [트리거 조건] - [기능 설명]"
 allowed-tools: Read, Grep, Glob
 ---
 
 # Skill Title
 
 ## Quick Reference
-[快速参考表]
+[빠른 참조표]
 
 ## Core Concepts
-[核心概念]
+[핵심 개념]
 
 ## Best Practices
-[最佳实践]
+[모범 사례]
 
 ## Common Pitfalls
-[常见错误]
+[흔한 실수]
 ```
 
-**Description 编写要点**：
+**Description 작성 요점**:
 
-- 必须包含明确的触发条件
-- 说明提供什么价值
-- 示例：`"Use when user mentions romance or love story - provides genre conventions and emotional beat planning for romance writing"`
+- 명확한 트리거 조건 포함 필수
+- 어떤 가치를 제공하는지 설명
+- 예시: `"Use when user mentions romance or love story - provides genre conventions and emotional beat planning for romance writing"`
 
-### 4.3 用户项目结构
+### 4.3 사용자 프로젝트 구조
 
-使用 `novel-skills init [name]` 初始化后的项目结构：
+`novel-skills init [name]`으로 초기화한 후의 프로젝트 구조:
 
 ```
 my-novel/
 ├── .claude/
-│   ├── commands/       # 从 novel-writer-skills 复制
-│   └── skills/         # 从 novel-writer-skills 复制
+│   ├── commands/       # novel-writer-skills에서 복사
+│   └── skills/         # novel-writer-skills에서 복사
 │
-├── .specify/           # Spec Kit 配置
+├── .specify/           # Spec Kit 설정
 │   ├── memory/
 │   │   └── constitution.md
 │   └── scripts/
@@ -256,13 +256,13 @@ my-novel/
 │           └── ...
 │
 ├── spec/
-│   ├── tracking/       # 追踪数据
+│   ├── tracking/       # 추적 데이터
 │   │   ├── plot-tracker.json
 │   │   ├── timeline.json
 │   │   ├── character-state.json
 │   │   └── relationships.json
 │   │
-│   └── knowledge/      # 知识库
+│   └── knowledge/      # 지식 라이브러리
 │       ├── characters/
 │       ├── worldbuilding/
 │       └── references/
@@ -272,210 +272,209 @@ my-novel/
 
 ---
 
-## 5. CLI 工具
+## 5. CLI 도구
 
-### 5.1 核心命令
+### 5.1 핵심 명령
 
 ```bash
-# 安装
+# 설치
 npm install -g novel-writer-skills
 
-# 初始化项目
+# 프로젝트 초기화
 novelwrite init my-novel
 
-# 安装插件
+# 플러그인 설치
 novelwrite plugin:add authentic-voice
 
-# 列出插件
+# 플러그인 목록
 novelwrite plugin:list
 
-# 升级项目
+# 프로젝트 업그레이드
 novelwrite upgrade
 
-# 检查状态
+# 상태 확인
 novelwrite check
 ```
 
-### 5.2 初始化流程
+### 5.2 초기화 프로세스
 
 ```bash
 novelwrite init my-novel
 ```
 
-执行内容：
-1. 创建项目目录结构
-2. 复制 `.claude/commands/` 和 `.claude/skills/`
-3. 初始化 `.specify/` 配置
-4. 创建 `spec/tracking/` 模板
-5. 生成 README.md
+실행 내용:
+1. 프로젝트 디렉토리 구조 생성
+2. `.claude/commands/`와 `.claude/skills/` 복사
+3. `.specify/` 설정 초기화
+4. `spec/tracking/` 템플릿 생성
+5. README.md 생성
 
 ---
 
-## 6. 开发路线图
+## 6. 개발 로드맵
 
-### 6.1 MVP（4-6周）
+### 6.1 MVP (4-6주)
 
-**目标**：验证核心功能可用性
+**목표**: 핵심 기능 사용성 검증
 
-**交付物**：
-- ✅ 七步方法论 Commands（7个命令）
-- ✅ 追踪验证 Commands（6个命令）
-- ✅ 2-3 个 Genre Knowledge Skills（romance, mystery, fantasy）
-- ✅ 2-3 个 Writing Techniques Skills（dialogue, scene-structure）
-- ✅ 1 个 Quality Assurance Skill（consistency-checker）
-- ✅ CLI 基础工具（init, plugin）
-- ✅ 核心文档
+**산출물**:
+- ✅ 7단계 방법론 Commands (7개 명령)
+- ✅ 추적 검증 Commands (6개 명령)
+- ✅ 2-3개 Genre Knowledge Skills (romance, mystery, fantasy)
+- ✅ 2-3개 Writing Techniques Skills (dialogue, scene-structure)
+- ✅ 1개 Quality Assurance Skill (consistency-checker)
+- ✅ CLI 기본 도구 (init, plugin)
+- ✅ 핵심 문서
 
-**成功标准**：
-- Commands 能正确执行七步流程
-- Skills 在正确场景下激活（激活率 > 80%）
-- 5-10 位早期用户测试反馈积极
+**성공 기준**:
+- Commands가 7단계 프로세스를 올바르게 실행
+- Skills가 올바른 상황에서 활성화 (활성화율 > 80%)
+- 5-10명 얼리 어답터 테스트 피드백 긍정적
 
-### 6.2 Phase 2（6-8周）
+### 6.2 Phase 2 (6-8주)
 
-**目标**：完整功能和插件生态
+**목표**: 완전한 기능과 플러그인 생태계
 
-**交付物**：
-- ✅ 完整 Genre Skills（5种类型）
-- ✅ 完整 Writing Skills（6种技巧）
-- ✅ 完整 QA Skills（4种检查）
-- ✅ 插件系统完善
-- ✅ 官方插件（authentic-voice, translate 等）
-- ✅ 插件开发文档
+**산출물**:
+- ✅ 완전한 Genre Skills (5개 장르)
+- ✅ 완전한 Writing Skills (6개 기법)
+- ✅ 완전한 QA Skills (4개 검사)
+- ✅ 플러그인 시스템 완성
+- ✅ 공식 플러그인 (authentic-voice, translate 등)
+- ✅ 플러그인 개발 문서
 
-**成功标准**：
-- Skills 覆盖主流创作场景
-- 一致性检查准确率 > 85%
-- 社区开始贡献插件
+**성공 기준**:
+- Skills가 주요 창작 시나리오 커버
+- 일관성 검사 정확도 > 85%
+- 커뮤니티에서 플러그인 기여 시작
 
-### 6.3 Phase 3（8-10周）
+### 6.3 Phase 3 (8-10주)
 
-**目标**：优化和推广
+**목표**: 최적화 및 홍보
 
-**交付物**：
-- ✅ 性能优化（Skills 加载 < 2秒）
-- ✅ 高级 Commands（polish-prose, theme-analysis 等）
-- ✅ 完整示例项目
-- ✅ 视频教程
-- ✅ 社区建设
+**산출물**:
+- ✅ 성능 최적화 (Skills 로딩 < 2초)
+- ✅ 고급 Commands (polish-prose, theme-analysis 등)
+- ✅ 완전한 예제 프로젝트
+- ✅ 비디오 튜토리얼
+- ✅ 커뮤니티 구축
 
-**成功标准**：
-- 100+ 活跃用户
-- 误报率 < 10%
+**성공 기준**:
+- 100+ 활성 사용자
+- 오탐률 < 10%
 - GitHub Stars > 200
 
 ---
 
-## 7. 成功指标
+## 7. 성공 지표
 
-### 7.1 技术指标
+### 7.1 기술 지표
 
-| 指标 | 目标 | 测量方法 |
+| 지표 | 목표 | 측정 방법 |
 |------|------|---------|
-| Skills 激活准确率 | > 85% | 测试用例通过率 |
-| 一致性检查召回率 | > 90% | 已知错误捕获率 |
-| Commands 执行成功率 | > 95% | 无错完成率 |
-| 加载性能 | < 2秒 | Skills 加载时间 |
-| 误报率 | < 10% | 错误警报占比 |
+| Skills 활성화 정확도 | > 85% | 테스트 케이스 통과율 |
+| 일관성 검사 리콜률 | > 90% | 알려진 오류 포착률 |
+| Commands 실행 성공률 | > 95% | 오류 없는 완료율 |
+| 로딩 성능 | < 2초 | Skills 로딩 시간 |
+| 오탐률 | < 10% | 잘못된 알림 비율 |
 
-### 7.2 用户指标
+### 7.2 사용자 지표
 
-| 指标 | 目标 | 测量方法 |
+| 지표 | 목표 | 측정 방법 |
 |------|------|---------|
-| 月活用户 | 100+ | GitHub insights |
-| 留存率（7天） | > 40% | 持续使用统计 |
-| 完整流程完成率 | > 60% | 用户完成七步方法论比例 |
-| 用户满意度 | > 4.0/5.0 | 问卷调查 |
-| 社区贡献 | 5+ PRs/月 | GitHub contributions |
+| 월간 활성 사용자 | 100+ | GitHub insights |
+| 유지율 (7일) | > 40% | 지속 사용 통계 |
+| 전체 프로세스 완료율 | > 60% | 7단계 방법론 완료 비율 |
+| 사용자 만족도 | > 4.0/5.0 | 설문 조사 |
+| 커뮤니티 기여 | 5+ PRs/월 | GitHub contributions |
 
 ---
 
-## 8. 风险与对策
+## 8. 리스크 및 대책
 
-### 8.1 技术风险
+### 8.1 기술 리스크
 
-| 风险 | 影响 | 对策 |
-|------|------|------|
-| Skills 激活不准确 | 用户体验差 | 精心编写 description，充分测试 |
-| 误报率高 | 用户信任度下降 | 分级警告（Critical/Warning/Note） |
-| 性能问题 | 加载慢，影响使用 | 懒加载，优化 Skill 大小 |
+| 리스크 | 영향 | 대책 |
+|--------|------|------|
+| Skills 활성화 부정확 | 사용자 경험 저하 | description 정밀 작성, 충분한 테스트 |
+| 높은 오탐률 | 사용자 신뢰도 하락 | 등급별 경고 (Critical/Warning/Note) |
+| 성능 문제 | 로딩 지연, 사용에 영향 | 지연 로딩, Skill 크기 최적화 |
 
-### 8.2 产品风险
+### 8.2 제품 리스크
 
-| 风险 | 影响 | 对策 |
-|------|------|------|
-| 只支持 Claude，用户基数小 | 增长受限 | 专注深度而非广度，打造最佳体验 |
-| 学习曲线陡峭 | 新用户流失 | 完善文档，提供示例，引导式教程 |
-| 社区参与度低 | 生态发展慢 | 激励机制，降低贡献门槛 |
+| 리스크 | 영향 | 대책 |
+|--------|------|------|
+| Claude만 지원, 사용자 기반 소규모 | 성장 제한 | 넓이보다 깊이에 집중, 최고의 경험 구축 |
+| 학습 곡선 가파름 | 신규 사용자 이탈 | 문서 완선, 예제 제공, 가이드 튜토리얼 |
+| 커뮤니티 참여도 낮음 | 생태계 발전 느림 | 인센티브 메커니즘, 기여 문턱 낮추기 |
 
 ---
 
-## 9. 下一步行动
+## 9. 다음 행동 항목
 
-### 9.1 立即执行（本周）
+### 9.1 즉시 실행 (이번 주)
 
-1. **搭建项目框架**
-   - 创建 `novel-writer-skills` 仓库
-   - 设置项目结构
-   - 配置 TypeScript 和构建工具
+1. **프로젝트 프레임워크 구축**
+   - `novel-writer-skills` 저장소 생성
+   - 프로젝트 구조 설정
+   - TypeScript 및 빌드 도구 설정
 
-2. **实现 CLI 基础**
-   - `novel-skills init` 命令
-   - 项目模板文件
+2. **CLI 기본 구현**
+   - `novel-skills init` 명령
+   - 프로젝트 템플릿 파일
 
-3. **编写第一个 Command**
-   - `/constitution` 命令
-   - 测试在 Claude Code 中运行
+3. **첫 번째 Command 작성**
+   - `/constitution` 명령
+   - Claude Code에서 실행 테스트
 
-### 9.2 近期目标（2周内）
+### 9.2 단기 목표 (2주 내)
 
-1. **完成七步方法论 Commands**
-   - 7个核心命令全部实现
-   - 编写使用文档
+1. **7단계 방법론 Commands 완성**
+   - 7개 핵심 명령 전부 구현
+   - 사용 문서 작성
 
-2. **实现 2-3 个基础 Skills**
+2. **2-3개 기본 Skills 구현**
    - romance-novel-conventions
    - dialogue-techniques
    - consistency-checker
 
-3. **测试与迭代**
-   - 邀请 5-10 位早期用户
-   - 收集反馈，快速迭代
+3. **테스트 및 반복**
+   - 5-10명 얼리 어답터 초대
+   - 피드백 수집, 빠른 반복
 
-### 9.3 中期目标（4-6周）
+### 9.3 중기 목표 (4-6주)
 
-1. **完成 MVP**
-   - 所有核心功能实现
-   - 文档完善
-   - 示例项目
+1. **MVP 완성**
+   - 모든 핵심 기능 구현
+   - 문서 완성
+   - 예제 프로젝트
 
-2. **准备发布**
-   - npm 包发布
-   - GitHub 仓库公开
-   - 编写发布说明
+2. **출시 준비**
+   - npm 패키지 발행
+   - GitHub 저장소 공개
+   - 릴리스 노트 작성
 
 ---
 
-## 附录
+## 부록
 
-### A. 参考资源
+### A. 참고 자료
 
-- [Anthropic Agent Skills 文档](https://docs.anthropic.com/en/docs/build-with-claude/agent-skills)
-- [Claude Code Slash Commands 规范](https://docs.anthropic.com/en/docs/build-with-claude/slash-commands)
-- [novel-writer 项目](https://github.com/wordflowlab/novel-writer)（参考方法论）
+- [Anthropic Agent Skills 문서](https://docs.anthropic.com/en/docs/build-with-claude/agent-skills)
+- [Claude Code Slash Commands 사양](https://docs.anthropic.com/en/docs/build-with-claude/slash-commands)
+- [novel-writer 프로젝트](https://github.com/wordflowlab/novel-writer) (방법론 참고)
 
-### B. 术语表
+### B. 용어집
 
-| 术语 | 说明 |
+| 용어 | 설명 |
 |------|------|
-| **Slash Commands** | 用户在 Claude Code 中输入的 `/` 开头命令 |
-| **Agent Skills** | AI 自动激活的知识库和能力模块 |
-| **七步方法论** | constitution → specify → clarify → plan → tasks → write → analyze |
-| **规格驱动开发（SDD）** | 先定义规格，再执行创作的方法论 |
+| **Slash Commands** | Claude Code에서 `/`로 시작하는 사용자 입력 명령 |
+| **Agent Skills** | AI가 자동 활성화하는 지식 라이브러리 및 역량 모듈 |
+| **7단계 방법론** | constitution → specify → clarify → plan → tasks → write → analyze |
+| **규격 주도 개발 (SDD)** | 먼저 규격을 정의하고 이후 창작을 실행하는 방법론 |
 
 ---
 
-**版本历史**
+**버전 이력**
 
-- v1.0 (2025-10-18): 初始版本，明确产品定位和核心功能
-
+- v1.0 (2025-10-18): 초기 버전, 제품 포지셔닝 및 핵심 기능 명확화

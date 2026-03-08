@@ -10,7 +10,7 @@ export interface ProjectInfo {
 }
 
 /**
- * 检测当前目录是否是 novel-writer-skills 项目
+ * 현재 디렉토리가 novel-writer-skills 프로젝트인지 감지
  */
 export async function isProjectRoot(dir: string): Promise<boolean> {
   const configPath = path.join(dir, '.specify', 'config.json');
@@ -18,7 +18,7 @@ export async function isProjectRoot(dir: string): Promise<boolean> {
 }
 
 /**
- * 向上查找项目根目录
+ * 상위 디렉토리로 프로젝트 루트 검색
  */
 export async function findProjectRoot(startDir: string = process.cwd()): Promise<string | null> {
   let currentDir = startDir;
@@ -30,7 +30,7 @@ export async function findProjectRoot(startDir: string = process.cwd()): Promise
     
     const parentDir = path.dirname(currentDir);
     
-    // 已到达文件系统根目录
+    // 파일 시스템 루트에 도달
     if (parentDir === currentDir) {
       return null;
     }
@@ -40,7 +40,7 @@ export async function findProjectRoot(startDir: string = process.cwd()): Promise
 }
 
 /**
- * 确保在项目根目录，否则抛出错误
+ * 프로젝트 루트에 있는지 확인, 아니면 오류 발생
  */
 export async function ensureProjectRoot(): Promise<string> {
   const projectRoot = await findProjectRoot();
@@ -53,7 +53,7 @@ export async function ensureProjectRoot(): Promise<string> {
 }
 
 /**
- * 获取项目信息
+ * 프로젝트 정보 가져오기
  */
 export async function getProjectInfo(projectPath: string): Promise<ProjectInfo | null> {
   try {

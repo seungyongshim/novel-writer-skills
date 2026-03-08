@@ -1,30 +1,29 @@
-name: authentic-voice
+﻿name: authentic-voice
 version: 1.0.0
-description: 真实人声写作插件——提升原创度、生活质感与个体声音一致性
+description: 진정한 인간 목소리 글쓰기 플러그인 - 독창성, 생활 질감 및 개인 목소리 일관성 향상
 type: feature
 author: Novel Writer Community
 commands:
   - id: authentic-voice
     file: commands/authentic-voice.md
-    description: 启动真实人声写作模式（基于个人语料与生活细节）
+    description: 진정한 인간 목소리 글쓰기 모드 시작 (개인 코퍼스와 생활 디테일 기반)
   - id: authenticity-audit
     file: commands/authenticity-audit.md
-    description: 对现有文本进行“人味”自查与改写建议
+    description: 기존 텍스트에 "인간미" 자가진단 및 개선 제안 수행
 experts:
   - id: authentic-editor
     file: experts/authentic-editor.md
-    title: 真实人声编辑
-    description: 擅长将文本改写为更自然、更具生活细节的表达
+    title: 진정한 인간 목소리 편집자
+    description: 텍스트를 더 자연스럽고 생활 디테일이 풍부한 표현으로 개선하는 전문가
 dependencies:
   core: ">=0.5.0"
 installation:
   message: |
-    ✅ 真实人声写作插件安装成功
+    ✅ 진정한 인간 목소리 글쓰기 플러그인 설치 완료
 
-    用法建议：
-    1. 在 .specify/memory/personal-voice.md 中填写你的口头禅、常用句式、生活经历与行业词汇
-    2. 在 AI 助手中使用 /authentic-voice 进入真实人声写作模式
-    3. 对既有文本运行 /authenticity-audit 获取自查清单与修改建议
+    사용 가이드:
+    1. .specify/memory/personal-voice.md에 말버릇, 자주 쓰는 문형, 생활 경험과 업계 어휘를 작성하세요
+    2. AI 어시스턴트에서 /authentic-voice로 진정한 인간 목소리 글쓰기 모드에 진입하세요
+    3. 기존 텍스트에 /authenticity-audit를 실행하여 자가진단 체크리스트와 수정 제안을 받으세요
 
-    目标：提升原创度、生活质感和你的个人表达一致性，帮助构建可信的人设与稳定文风
-
+    목표: 독창성, 생활 질감과 당신의 개인적 표현 일관성을 향상시켜, 신뢰할 수 있는 캐릭터와 안정적인 문체 구축을 돕습니다

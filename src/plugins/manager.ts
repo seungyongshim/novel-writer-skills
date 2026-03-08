@@ -38,7 +38,7 @@ export class PluginManager {
   }
 
   /**
-   * 扫描并加载所有插件
+   * 모든 플러그인 스캔 및 로드
    */
   async loadPlugins(): Promise<void> {
     try {
@@ -46,24 +46,24 @@ export class PluginManager {
       const plugins = await this.scanPlugins();
 
       if (plugins.length === 0) {
-        logger.info('没有发现插件');
+        logger.info('플러그인이 발견되지 않았습니다');
         return;
       }
 
-      logger.info(`发现 ${plugins.length} 个插件`);
+      logger.info(`${plugins.length}개 플러그인 발견`);
 
       for (const pluginName of plugins) {
         await this.loadPlugin(pluginName);
       }
 
-      logger.success('所有插件加载完成');
+      logger.success('모든 플러그인 로드 완료');
     } catch (error) {
-      logger.error('加载插件失败:', error);
+      logger.error('플러그인 로드 실패:', error);
     }
   }
 
   /**
-   * 扫描插件目录
+   * 플러그인 디렉토리 스캔
    */
   private async scanPlugins(): Promise<string[]> {
     try {
@@ -85,48 +85,48 @@ export class PluginManager {
 
       return plugins;
     } catch (error) {
-      logger.error('扫描插件目录失败:', error);
+      logger.error('플러그인 디렉토리 스캔 실패:', error);
       return [];
     }
   }
 
   /**
-   * 加载单个插件
+   * 단일 플러그인 로드
    */
   private async loadPlugin(pluginName: string): Promise<void> {
     try {
-      logger.info(`加载插件: ${pluginName}`);
+      logger.info(`플러그인 로드: ${pluginName}`);
 
       const configPath = path.join(this.pluginsDir, pluginName, 'config.yaml');
       const config = await this.loadConfig(configPath);
 
       if (!config) {
-        logger.warn(`插件 ${pluginName} 配置无效`);
+        logger.warn(`플러그인 ${pluginName} 설정이 유효하지 않습니다`);
         return;
       }
 
-      // 注入命令
+      // 명령 주입
       if (config.commands && config.commands.length > 0) {
         await this.injectCommands(pluginName, config.commands);
       }
 
-      // 注入 Skills
+      // Skills 주입
       if (config.skills && config.skills.length > 0) {
         await this.injectSkills(pluginName, config.skills);
       }
 
-      logger.success(`插件 ${pluginName} 加载成功`);
+      logger.success(`플러그인 ${pluginName} 로드 성공`);
 
       if (config.installation?.message) {
         console.log(config.installation.message);
       }
     } catch (error) {
-      logger.error(`加载插件 ${pluginName} 失败:`, error);
+      logger.error(`플러그인 ${pluginName} 로드 실패:`, error);
     }
   }
 
   /**
-   * 读取插件配置
+   * 플러그인 설정 읽기
    */
   private async loadConfig(configPath: string): Promise<PluginConfig | null> {
     try {
@@ -139,13 +139,13 @@ export class PluginManager {
 
       return config;
     } catch (error) {
-      logger.error(`读取配置文件失败: ${configPath}`, error);
+      logger.error(`설정 파일 읽기 실패: ${configPath}`, error);
       return null;
     }
   }
 
   /**
-   * 注入插件命令
+   * 플러그인 명령 주입
    */
   private async injectCommands(
     pluginName: string,
@@ -160,15 +160,15 @@ export class PluginManager {
 
         await fs.ensureDir(this.commandsDir);
         await fs.copy(sourcePath, destPath);
-        logger.debug(`注入命令: /${cmd.id}`);
+        logger.debug(`명령 주입: /${cmd.id}`);
       } catch (error) {
-        logger.error(`注入命令 ${cmd.id} 失败:`, error);
+        logger.error(`명령 ${cmd.id} 주입 실패:`, error);
       }
     }
   }
 
   /**
-   * 注入插件 Skills
+   * 플러그인 Skills 주입
    */
   private async injectSkills(
     pluginName: string,
@@ -183,15 +183,15 @@ export class PluginManager {
 
         await fs.ensureDir(path.dirname(destPath));
         await fs.copy(sourcePath, destPath);
-        logger.debug(`注入 Skill: ${skill.id}`);
+        logger.debug(`Skill 주입: ${skill.id}`);
       } catch (error) {
-        logger.error(`注入 Skill ${skill.id} 失败:`, error);
+        logger.error(`Skill ${skill.id} 주입 실패:`, error);
       }
     }
   }
 
   /**
-   * 列出所有已安装的插件
+   * 설치된 모든 플러그인 목록
    */
   async listPlugins(): Promise<PluginConfig[]> {
     const plugins = await this.scanPlugins();
@@ -209,57 +209,57 @@ export class PluginManager {
   }
 
   /**
-   * 安装插件
+   * 플러그인 설치
    */
   async installPlugin(pluginName: string, source?: string): Promise<void> {
     try {
-      logger.info(`安装插件: ${pluginName}`);
+      logger.info(`플러그인 설치: ${pluginName}`);
 
       if (source) {
         const destPath = path.join(this.pluginsDir, pluginName);
         await fs.copy(source, destPath);
       } else {
-        logger.warn('远程安装功能尚未实现');
+        logger.warn('원격 설치 기능은 아직 구현되지 않았습니다');
         return;
       }
 
       await this.loadPlugin(pluginName);
-      logger.success(`插件 ${pluginName} 安装成功`);
+      logger.success(`플러그인 ${pluginName} 설치 성공`);
     } catch (error) {
-      logger.error(`安装插件 ${pluginName} 失败:`, error);
+      logger.error(`플러그인 ${pluginName} 설치 실패:`, error);
       throw error;
     }
   }
 
   /**
-   * 移除插件
+   * 플러그인 제거
    */
   async removePlugin(pluginName: string): Promise<void> {
     try {
-      logger.info(`移除插件: ${pluginName}`);
+      logger.info(`플러그인 제거: ${pluginName}`);
 
-      // 删除插件目录
+      // 플러그인 디렉토리 삭제
       const pluginPath = path.join(this.pluginsDir, pluginName);
       await fs.remove(pluginPath);
 
-      // 删除注入的命令
+      // 주입된 명령 삭제
       if (await fs.pathExists(this.commandsDir)) {
         const commandFiles = await fs.readdir(this.commandsDir);
         for (const file of commandFiles) {
-          // 这里简化处理，实际应该读取插件配置来确定要删除的文件
-          // 暂时跳过，因为我们需要知道哪些命令属于这个插件
+          // 여기서는 간소화 처리, 실제로는 플러그인 설정을 읽어 삭제할 파일을 결정해야 함
+          // 어떤 명령이 이 플러그인에 속하는지 알아야 하므로 임시 스킵
         }
       }
 
-      // 删除注入的 Skills
+      // 주입된 Skills 삭제
       const pluginSkillsDir = path.join(this.skillsDir, pluginName);
       if (await fs.pathExists(pluginSkillsDir)) {
         await fs.remove(pluginSkillsDir);
       }
 
-      logger.success(`插件 ${pluginName} 移除成功`);
+      logger.success(`플러그인 ${pluginName} 제거 성공`);
     } catch (error) {
-      logger.error(`移除插件 ${pluginName} 失败:`, error);
+      logger.error(`플러그인 ${pluginName} 제거 실패:`, error);
       throw error;
     }
   }
