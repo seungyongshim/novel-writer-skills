@@ -1,41 +1,41 @@
 #!/bin/bash
 
-echo "🚀 初始化追踪系统..."
+echo "🚀 추적 시스템 초기화 중..."
 
-# 检查前置条件
+# 선행 조건 확인
 story_exists=false
 outline_exists=false
 
-# 查找 specification 文件
+# specification 파일 찾기
 if ls stories/*/specification.md 1> /dev/null 2>&1; then
     story_exists=true
     story_file=$(ls stories/*/specification.md | head -1)
 fi
 
-# 查找 outline 文件
+# outline 파일 찾기
 if ls stories/*/outline.md 1> /dev/null 2>&1; then
     outline_exists=true
     outline_file=$(ls stories/*/outline.md | head -1)
 fi
 
 if [ "$story_exists" = false ] || [ "$outline_exists" = false ]; then
-    echo "❌ 请先完成 /specify 和 /plan 命令"
-    echo "   缺少: ${story_exists:+}${story_exists:-specification.md} ${outline_exists:+}${outline_exists:-outline.md}"
+    echo "❌ 먼저 /specify와 /plan 명령을 완료하세요"
+    echo "   누락: ${story_exists:+}${story_exists:-specification.md} ${outline_exists:+}${outline_exists:-outline.md}"
     exit 1
 fi
 
-# 创建追踪目录
+# 추적 디렉토리 생성
 mkdir -p spec/tracking
 
-# 获取故事名称
+# 스토리 이름 가져오기
 story_dir=$(dirname "$story_file")
 story_name=$(basename "$story_dir")
 
-echo "📖 为《${story_name}》初始化追踪系统..."
+echo "📖 《${story_name}》 추적 시스템 초기화 중..."
 
-# 初始化 plot-tracker.json
+# plot-tracker.json 초기화
 if [ ! -f "spec/tracking/plot-tracker.json" ]; then
-    echo "📝 创建 plot-tracker.json..."
+    echo "📝 plot-tracker.json 생성 중..."
     cat > spec/tracking/plot-tracker.json <<EOF
 {
   "novel": "${story_name}",
@@ -43,21 +43,21 @@ if [ ! -f "spec/tracking/plot-tracker.json" ]; then
   "currentState": {
     "chapter": 0,
     "volume": 1,
-    "mainPlotStage": "准备阶段",
-    "location": "待定",
-    "timepoint": "故事开始前"
+    "mainPlotStage": "준비 단계",
+    "location": "미정",
+    "timepoint": "이야기 시작 전"
   },
   "plotlines": {
     "main": {
-      "name": "主线剧情",
-      "description": "待从大纲提取",
-      "status": "待开始",
-      "currentNode": "起点",
+      "name": "메인 플롯",
+      "description": "개요에서 추출 예정",
+      "status": "시작 전",
+      "currentNode": "시작점",
       "completedNodes": [],
       "upcomingNodes": [],
       "plannedClimax": {
         "chapter": null,
-        "description": "待规划"
+        "description": "계획 예정"
       }
     },
     "subplots": []
@@ -75,50 +75,50 @@ if [ ! -f "spec/tracking/plot-tracker.json" ]; then
   "notes": {
     "plotHoles": [],
     "inconsistencies": [],
-    "reminders": ["请根据实际故事内容更新追踪数据"]
+    "reminders": ["실제 이야기 내용에 따라 추적 데이터를 업데이트하세요"]
   }
 }
 EOF
 fi
 
-# 初始化 timeline.json
+# timeline.json 초기화
 if [ ! -f "spec/tracking/timeline.json" ]; then
-    echo "⏰ 创建 timeline.json..."
+    echo "⏰ timeline.json 생성 중..."
     cat > spec/tracking/timeline.json <<EOF
 {
   "novel": "${story_name}",
   "lastUpdated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-  "storyTimeUnit": "天",
+  "storyTimeUnit": "일",
   "realWorldReference": null,
   "timeline": [
     {
       "chapter": 0,
-      "storyTime": "第0天",
-      "description": "故事开始前",
-      "events": ["待添加"],
-      "location": "待定"
+      "storyTime": "0일차",
+      "description": "이야기 시작 전",
+      "events": ["추가 예정"],
+      "location": "미정"
     }
   ],
   "parallelEvents": [],
   "timeSpan": {
-    "start": "第0天",
-    "current": "第0天",
-    "elapsed": "0天"
+    "start": "0일차",
+    "current": "0일차",
+    "elapsed": "0일"
   }
 }
 EOF
 fi
 
-# 初始化 relationships.json
+# relationships.json 초기화
 if [ ! -f "spec/tracking/relationships.json" ]; then
-    echo "👥 创建 relationships.json..."
+    echo "👥 relationships.json 생성 중..."
     cat > spec/tracking/relationships.json <<EOF
 {
   "novel": "${story_name}",
   "lastUpdated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
   "characters": {
-    "主角": {
-      "name": "待设定",
+    "주인공": {
+      "name": "설정 예정",
       "relationships": {
         "allies": [],
         "enemies": [],
@@ -134,23 +134,23 @@ if [ ! -f "spec/tracking/relationships.json" ]; then
 EOF
 fi
 
-# 初始化 character-state.json
+# character-state.json 초기화
 if [ ! -f "spec/tracking/character-state.json" ]; then
-    echo "📍 创建 character-state.json..."
+    echo "📍 character-state.json 생성 중..."
     cat > spec/tracking/character-state.json <<EOF
 {
   "novel": "${story_name}",
   "lastUpdated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
   "characters": {
-    "主角": {
-      "name": "待设定",
-      "status": "健康",
-      "location": "待定",
+    "주인공": {
+      "name": "설정 예정",
+      "status": "건강",
+      "location": "미정",
       "possessions": [],
       "skills": [],
       "lastSeen": {
         "chapter": 0,
-        "description": "尚未出场"
+        "description": "아직 미등장"
       },
       "development": {
         "physical": 0,
@@ -167,17 +167,17 @@ EOF
 fi
 
 echo ""
-echo "✅ 追踪系统初始化完成！"
+echo "✅ 추적 시스템 초기화 완료!"
 echo ""
-echo "📊 已创建以下追踪文件："
-echo "   • spec/tracking/plot-tracker.json - 情节追踪"
-echo "   • spec/tracking/timeline.json - 时间线管理"
-echo "   • spec/tracking/relationships.json - 关系网络"
-echo "   • spec/tracking/character-state.json - 角色状态"
+echo "📊 다음 추적 파일이 생성되었습니다:"
+echo "   • spec/tracking/plot-tracker.json - 플롯 추적"
+echo "   • spec/tracking/timeline.json - 타임라인 관리"
+echo "   • spec/tracking/relationships.json - 관계 네트워크"
+echo "   • spec/tracking/character-state.json - 캐릭터 상태"
 echo ""
-echo "💡 下一步："
-echo "   1. 使用 /write 开始创作（会自动更新追踪数据）"
-echo "   2. 定期使用 /track 查看综合报告"
-echo "   3. 使用 /plot-check 等命令进行一致性检查"
+echo "💡 다음 단계:"
+echo "   1. /write를 사용하여 창작 시작 (추적 데이터가 자동 업데이트)"
+echo "   2. 정기적으로 /track을 사용하여 종합 보고서 확인"
+echo "   3. /plot-check 등 명령으로 일관성 검사"
 echo ""
-echo "📝 提示：追踪文件已预填充基础结构，会在写作过程中自动更新"
+echo "📝 팁: 추적 파일에 기본 구조가 미리 채워져 있으며, 집필 과정에서 자동 업데이트됩니다"

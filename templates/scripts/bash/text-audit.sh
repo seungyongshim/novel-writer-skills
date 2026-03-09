@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 文本人味自查（离线）：连接词/空话密度、句长统计、抽象词密度
+# 텍스트 자연스러움 자체 점검 (오프라인): 접속사/빈말 밀도, 문장 길이 통계, 추상어 밀도
 
 set -e
 
@@ -10,11 +10,11 @@ PROJECT_ROOT=$(get_project_root)
 
 FILE_PATH="$1"
 if [ -z "$FILE_PATH" ] || [ ! -f "$FILE_PATH" ]; then
-  echo "用法: scripts/bash/text-audit.sh <file>"
+  echo "사용법: scripts/bash/text-audit.sh <file>"
   exit 1
 fi
 
-# 选择配置：优先项目 spec/knowledge，其次 .specify/templates/knowledge
+# 설정 선택: 프로젝트 spec/knowledge 우선, 그 다음 .specify/templates/knowledge
 CFG_PROJECT="$PROJECT_ROOT/spec/knowledge/audit-config.json"
 CFG_TEMPLATE="$PROJECT_ROOT/.specify/templates/knowledge/audit-config.json"
 if [ -f "$CFG_PROJECT" ]; then
@@ -34,11 +34,11 @@ cfg_path = sys.argv[2] if len(sys.argv) > 2 else ''
 text = open(path, 'r', encoding='utf-8', errors='ignore').read()
 
 default_cfg = {
-  "connector_phrases": ["首先","其次","再次","然后","然而","总而言之","综上所述","在某种程度","众所周知","在当下","随着"],
-  "empty_phrases": ["广泛关注","引发热议","影响深远","具有重要意义","有效提升","具有一定的指导意义","值得我们思考"],
+  "connector_phrases": ["우선","다음으로","다시","그런 다음","그러나","총괄하면","종합하면","어느 정도","주지하다시피","현재","~에 따라"],
+  "empty_phrases": ["광범위한 관심","화제를 모은","영향이 깊은","중요한 의미를 가진","효과적으로 향상","일정한 지도적 의미","우리의 생각을 가치가 있는"],
   "cliche_pairs": [],
   "sentence_length": {"max_run_long":4, "max_run_short":5, "short_threshold":12, "long_threshold":35},
-  "abstract_nouns": ["价值","意义","认知","体系","模式","路径","方法论","趋势"],
+  "abstract_nouns": ["가치","의미","인식","체계","모델","경로","방법론","추세"],
   "min_concrete_details": 3
 }
 
@@ -102,43 +102,42 @@ def ratio(count):
   return (count / max(1,total_chars)) * 1000
 
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("📊 离线文本人味自查报告")
-print(f"文件: {os.path.basename(path)}  字符数: {total_chars}")
+print("📊 오프라인 텍스트 자연스러움 점검 보고서")
+print(f"파일: {os.path.basename(path)}  글자 수: {total_chars}")
 print("")
-print("连接词密度（每千字出现次数）")
+print("접속사 밀도 (천 글자당 출현 횟수)")
 total_conn = sum(connectors.values())
-print(f"  总计: {total_conn}  | 比率: {ratio(total_conn):.2f}")
+print(f"  합계: {total_conn}  | 비율: {ratio(total_conn):.2f}")
 for k,v in sorted(connectors.items(), key=lambda x: -x[1])[:10]:
   if v>0: print(f"  - {k}: {v}")
 
 print("")
-print("空话/套话计数")
+print("빈말/상투어 카운트")
 total_emp = sum(empties.values())
-print(f"  总计: {total_emp}  | 比率: {ratio(total_emp):.2f}")
+print(f"  합계: {total_emp}  | 비율: {ratio(total_emp):.2f}")
 for k,v in sorted(empties.items(), key=lambda x: -x[1])[:10]:
   if v>0: print(f"  - {k}: {v}")
 
 print("")
-print("句长统计")
-print(f"  句子数: {len(lens)}  | 平均: {avg:.1f}  | 标准差: {std:.1f}")
-print(f"  连续短句最大: {mx_run_short} (阈值 {cfg['sentence_length']['max_run_short']})")
-print(f"  连续长句最大: {mx_run_long} (阈值 {cfg['sentence_length']['max_run_long']})")
+print("문장 길이 통계")
+print(f"  문장 수: {len(lens)}  | 평균: {avg:.1f}  | 표준편차: {std:.1f}")
+print(f"  연속 단문 최대: {mx_run_short} (임계값 {cfg['sentence_length']['max_run_short']})")
+print(f"  연속 장문 최대: {mx_run_long} (임계값 {cfg['sentence_length']['max_run_long']})")
 
 print("")
-print("抽象过载（示例段，≥2 抽象词）")
+print("추상어 과부하 (예시 문장, 추상어 2개 이상)")
 if abstract_top:
   for idx, s in abstract_top:
     snippet = s[:80] + ("…" if len(s)>80 else "")
-    print(f"  - 第{idx+1}句: {snippet}")
+    print(f"  - 제{idx+1}문장: {snippet}")
 else:
-  print("  无显著抽象过载片段")
+  print("  뚜렷한 추상어 과부하 문장 없음")
 
 print("")
-print("建议")
-print("  - 用具体动作/器物/气味替代空话与抽象名词")
-print("  - 打断长长串句子；合并过多的短句以形成起伏")
-print("  - 复查连接词是否可删除或自然过渡")
-print("  - 写前先列3个生活细节作为锚点")
+print("제안")
+print("  - 빈말과 추상 명사를 구체적 동작/사물/냄새로 대체")
+print("  - 긴 문장을 끊고; 과도한 단문을 합쳐 리듬 변화 만들기")
+print("  - 접속사를 삭제하거나 자연스러운 전환으로 바꿀 수 있는지 재검토")
+print("  - 쓰기 전에 3개의 생활 디테일을 앵커로 나열")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 PY
-
