@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 检查写作状态脚本
-# 用于 /write 命令
+# 집필 상태 확인 스크립트
+# /write 명령어용
 
 set -e
 
@@ -9,7 +9,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# 检查是否为 checklist 模式
+# 체크리스트 모드 확인
 CHECKLIST_MODE=false
 if [ "$1" = "--checklist" ]; then
     CHECKLIST_MODE=true
@@ -19,79 +19,79 @@ fi
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 获取当前故事
+# 현재 스토리 가져오기
 STORY_NAME=$(get_active_story)
 STORY_DIR="stories/$STORY_NAME"
 
-# 检查方法论文档
+# 방법론 문서 확인
 check_methodology_docs() {
     local missing=()
 
-    [ ! -f ".specify/memory/constitution.md" ] && missing+=("宪法")
-    [ ! -f "$STORY_DIR/specification.md" ] && missing+=("规格")
-    [ ! -f "$STORY_DIR/creative-plan.md" ] && missing+=("计划")
-    [ ! -f "$STORY_DIR/tasks.md" ] && missing+=("任务")
+    [ ! -f ".specify/memory/constitution.md" ] && missing+=("헌법")
+    [ ! -f "$STORY_DIR/specification.md" ] && missing+=("사양")
+    [ ! -f "$STORY_DIR/creative-plan.md" ] && missing+=("계획")
+    [ ! -f "$STORY_DIR/tasks.md" ] && missing+=("작업")
 
     if [ ${#missing[@]} -gt 0 ]; then
-        echo "⚠️ 缺少以下基准文档："
+        echo "⚠️ 다음 기준 문서가 누락되었습니다:"
         for doc in "${missing[@]}"; do
             echo "  - $doc"
         done
         echo ""
-        echo "建议按照七步方法论完成前置步骤："
-        echo "1. /constitution - 创建创作宪法"
-        echo "2. /specify - 定义故事规格"
-        echo "3. /clarify - 澄清关键决策"
-        echo "4. /plan - 制定创作计划"
-        echo "5. /tasks - 生成任务清单"
+        echo "7단계 방법론에 따라 선행 단계를 완료하세요:"
+        echo "1. /constitution - 창작 헌법 작성"
+        echo "2. /specify - 스토리 사양 정의"
+        echo "3. /clarify - 핵심 결정 사항 명확화"
+        echo "4. /plan - 창작 계획 수립"
+        echo "5. /tasks - 작업 목록 생성"
         return 1
     fi
 
-    echo "✅ 方法论文档完整"
+    echo "✅ 방법론 문서 완비"
     return 0
 }
 
-# 检查待写作任务
+# 대기 중인 집필 작업 확인
 check_pending_tasks() {
     local tasks_file="$STORY_DIR/tasks.md"
 
     if [ ! -f "$tasks_file" ]; then
-        echo "❌ 任务文件不存在"
+        echo "❌ 작업 파일이 존재하지 않습니다"
         return 1
     fi
 
-    # 统计任务状态
+    # 작업 상태 집계
     local pending=$(grep -c "^- \[ \]" "$tasks_file" 2>/dev/null || echo 0)
     local in_progress=$(grep -c "^- \[~\]" "$tasks_file" 2>/dev/null || echo 0)
     local completed=$(grep -c "^- \[x\]" "$tasks_file" 2>/dev/null || echo 0)
 
     echo ""
-    echo "任务状态："
-    echo "  待开始：$pending"
-    echo "  进行中：$in_progress"
-    echo "  已完成：$completed"
+    echo "작업 상태:"
+    echo "  대기 중: $pending"
+    echo "  진행 중: $in_progress"
+    echo "  완료됨: $completed"
 
     if [ $pending -eq 0 ] && [ $in_progress -eq 0 ]; then
         echo ""
-        echo "🎉 所有任务已完成！"
-        echo "建议运行 /analyze 进行综合验证"
+        echo "🎉 모든 작업이 완료되었습니다!"
+        echo "/analyze 를 실행하여 종합 검증을 권장합니다"
         return 0
     fi
 
-    # 显示下一个待写作任务
+    # 다음 집필 작업 표시
     echo ""
-    echo "下一个写作任务："
-    grep "^- \[ \]" "$tasks_file" | head -n 1 || echo "（无待处理任务）"
+    echo "다음 집필 작업:"
+    grep "^- \[ \]" "$tasks_file" | head -n 1 || echo "(대기 중인 작업 없음)"
 }
 
-# 检查已完成内容
+# 완료된 콘텐츠 확인
 check_completed_content() {
     local content_dir="$STORY_DIR/content"
     local validation_rules="spec/tracking/validation-rules.json"
     local min_words=2000
     local max_words=4000
 
-    # 读取验证规则（如果存在）
+    # 검증 규칙 읽기 (존재하는 경우)
     if [ -f "$validation_rules" ]; then
         if command -v jq >/dev/null 2>&1; then
             min_words=$(jq -r '.rules.chapterMinWords // 2000' "$validation_rules")
@@ -103,31 +103,31 @@ check_completed_content() {
         local chapter_count=$(ls "$content_dir"/*.md 2>/dev/null | wc -l)
         if [ $chapter_count -gt 0 ]; then
             echo ""
-            echo "已完成章节：$chapter_count"
-            echo "字数要求：${min_words}-${max_words} 字"
+            echo "완료된 챕터: $chapter_count"
+            echo "글자 수 기준: ${min_words}-${max_words} 자"
             echo ""
-            echo "最近写作："
+            echo "최근 집필:"
             for file in $(ls -t "$content_dir"/*.md 2>/dev/null | head -n 3); do
                 local filename=$(basename "$file")
                 local words=$(count_chinese_words "$file")
                 local status="✅"
 
                 if [ "$words" -lt "$min_words" ]; then
-                    status="⚠️ 字数不足"
+                    status="⚠️ 글자 수 부족"
                 elif [ "$words" -gt "$max_words" ]; then
-                    status="⚠️ 字数超出"
+                    status="⚠️ 글자 수 초과"
                 fi
 
-                echo "  - $filename: $words 字 $status"
+                echo "  - $filename: $words 자 $status"
             done
         fi
     else
         echo ""
-        echo "尚未开始写作"
+        echo "아직 집필을 시작하지 않았습니다"
     fi
 }
 
-# 生成 checklist 格式输出
+# 체크리스트 형식 출력 생성
 output_checklist() {
     local has_constitution=false
     local has_specification=false
@@ -141,32 +141,32 @@ output_checklist() {
     local min_words=2000
     local max_words=4000
 
-    # 检查文档
+    # 문서 확인
     [ -f ".specify/memory/constitution.md" ] && has_constitution=true
     [ -f "$STORY_DIR/specification.md" ] && has_specification=true
     [ -f "$STORY_DIR/creative-plan.md" ] && has_plan=true
     [ -f "$STORY_DIR/tasks.md" ] && has_tasks=true
 
-    # 统计任务
+    # 작업 집계
     if [ "$has_tasks" = true ]; then
         pending=$(grep -c "^- \[ \]" "$STORY_DIR/tasks.md" 2>/dev/null || echo 0)
         in_progress=$(grep -c "^- \[~\]" "$STORY_DIR/tasks.md" 2>/dev/null || echo 0)
         completed=$(grep -c "^- \[x\]" "$STORY_DIR/tasks.md" 2>/dev/null || echo 0)
     fi
 
-    # 读取验证规则
+    # 검증 규칙 읽기
     local validation_rules="$STORY_DIR/spec/tracking/validation-rules.json"
     if [ -f "$validation_rules" ] && command -v jq >/dev/null 2>&1; then
         min_words=$(jq -r '.rules.chapterMinWords // 2000' "$validation_rules")
         max_words=$(jq -r '.rules.chapterMaxWords // 4000' "$validation_rules")
     fi
 
-    # 检查章节内容
+    # 챕터 콘텐츠 확인
     local content_dir="$STORY_DIR/content"
     if [ -d "$content_dir" ]; then
         chapter_count=$(ls "$content_dir"/*.md 2>/dev/null | wc -l | tr -d ' ')
 
-        # 统计不符合字数要求的章节
+        # 글자 수 기준 미달 챕터 집계
         for file in "$content_dir"/*.md; do
             [ -f "$file" ] || continue
             local words=$(count_chinese_words "$file")
@@ -176,120 +176,120 @@ output_checklist() {
         done
     fi
 
-    # 计算总任务和完成率
+    # 총 작업 수 및 완료율 계산
     local total_tasks=$((pending + in_progress + completed))
     local completion_rate=0
     if [ $total_tasks -gt 0 ]; then
         completion_rate=$((completed * 100 / total_tasks))
     fi
 
-    # 输出 checklist
+    # 체크리스트 출력
     cat <<EOF
-# 写作状态检查 Checklist
+# 집필 상태 확인 체크리스트
 
-**检查时间**: $(date '+%Y-%m-%d %H:%M:%S')
-**当前故事**: $STORY_NAME
-**字数标准**: ${min_words}-${max_words} 字
+**확인 시간**: $(date '+%Y-%m-%d %H:%M:%S')
+**현재 스토리**: $STORY_NAME
+**글자 수 기준**: ${min_words}-${max_words} 자
 
 ---
 
-## 文档完整性
+## 문서 완비성
 
-- [$([ "$has_constitution" = true ] && echo "x" || echo " ")] CHK001 constitution.md 存在
-- [$([ "$has_specification" = true ] && echo "x" || echo " ")] CHK002 specification.md 存在
-- [$([ "$has_plan" = true ] && echo "x" || echo " ")] CHK003 creative-plan.md 存在
-- [$([ "$has_tasks" = true ] && echo "x" || echo " ")] CHK004 tasks.md 存在
+- [$([ "$has_constitution" = true ] && echo "x" || echo " ")] CHK001 constitution.md 존재
+- [$([ "$has_specification" = true ] && echo "x" || echo " ")] CHK002 specification.md 존재
+- [$([ "$has_plan" = true ] && echo "x" || echo " ")] CHK003 creative-plan.md 존재
+- [$([ "$has_tasks" = true ] && echo "x" || echo " ")] CHK004 tasks.md 존재
 
-## 任务进度
+## 작업 진행도
 
 EOF
 
     if [ "$has_tasks" = true ]; then
-        echo "- [$([ $in_progress -gt 0 ] && echo "x" || echo " ")] CHK005 有进行中的任务（$in_progress 个）"
-        echo "- [x] CHK006 待开始任务数量（$pending 个）"
-        echo "- [$([ $completed -gt 0 ] && echo "x" || echo " ")] CHK007 已完成任务进度（$completed/$total_tasks = $completion_rate%）"
+        echo "- [$([ $in_progress -gt 0 ] && echo "x" || echo " ")] CHK005 진행 중인 작업 있음 ($in_progress 개)"
+        echo "- [x] CHK006 대기 중인 작업 수 ($pending 개)"
+        echo "- [$([ $completed -gt 0 ] && echo "x" || echo " ")] CHK007 완료된 작업 진행률 ($completed/$total_tasks = $completion_rate%)"
     else
-        echo "- [ ] CHK005 有进行中的任务（tasks.md 不存在）"
-        echo "- [ ] CHK006 待开始任务数量（tasks.md 不存在）"
-        echo "- [ ] CHK007 已完成任务进度（tasks.md 不存在）"
+        echo "- [ ] CHK005 진행 중인 작업 있음 (tasks.md 없음)"
+        echo "- [ ] CHK006 대기 중인 작업 수 (tasks.md 없음)"
+        echo "- [ ] CHK007 완료된 작업 진행률 (tasks.md 없음)"
     fi
 
     cat <<EOF
 
-## 内容质量
+## 콘텐츠 품질
 
-- [$([ $chapter_count -gt 0 ] && echo "x" || echo " ")] CHK008 已完成章节数（$chapter_count 章）
+- [$([ $chapter_count -gt 0 ] && echo "x" || echo " ")] CHK008 완료된 챕터 수 ($chapter_count 장)
 EOF
 
     if [ $chapter_count -gt 0 ]; then
-        echo "- [$([ $bad_chapters -eq 0 ] && echo "x" || echo "!")] CHK009 字数符合标准（$([ $bad_chapters -eq 0 ] && echo "全部符合" || echo "$bad_chapters 章不符合")）"
+        echo "- [$([ $bad_chapters -eq 0 ] && echo "x" || echo "!")] CHK009 글자 수 기준 충족 ($([ $bad_chapters -eq 0 ] && echo "전부 충족" || echo "$bad_chapters 장 미충족"))"
     else
-        echo "- [ ] CHK009 字数符合标准（尚未开始写作）"
+        echo "- [ ] CHK009 글자 수 기준 충족 (아직 집필 시작 전)"
     fi
 
     cat <<EOF
 
 ---
 
-## 后续行动
+## 후속 조치
 
 EOF
 
     local has_actions=false
 
-    # 检查缺失文档
+    # 누락 문서 확인
     if [ "$has_constitution" = false ] || [ "$has_specification" = false ] || [ "$has_plan" = false ] || [ "$has_tasks" = false ]; then
-        echo "- [ ] 完成方法论文档（运行对应命令：/constitution, /specify, /plan, /tasks）"
+        echo "- [ ] 방법론 문서 완성 (해당 명령어 실행: /constitution, /specify, /plan, /tasks)"
         has_actions=true
     fi
 
-    # 检查任务
+    # 작업 확인
     if [ $pending -gt 0 ] || [ $in_progress -gt 0 ]; then
         if [ $in_progress -gt 0 ]; then
-            echo "- [ ] 继续进行中的任务（$in_progress 个）"
+            echo "- [ ] 진행 중인 작업 계속 ($in_progress 개)"
         else
-            echo "- [ ] 开始下一个待写作任务（共 $pending 个）"
+            echo "- [ ] 다음 대기 작업 시작 (총 $pending 개)"
         fi
         has_actions=true
     fi
 
-    # 检查章节质量
+    # 챕터 품질 확인
     if [ $bad_chapters -gt 0 ]; then
-        echo "- [ ] 修复字数不符合要求的章节（$bad_chapters 章）"
+        echo "- [ ] 글자 수 기준 미달 챕터 수정 ($bad_chapters 장)"
         has_actions=true
     fi
 
-    # 完成建议
+    # 완료 시 제안
     if [ $pending -eq 0 ] && [ $in_progress -eq 0 ] && [ $completed -gt 0 ]; then
-        echo "- [ ] 运行 /analyze 进行综合验证"
+        echo "- [ ] /analyze 를 실행하여 종합 검증"
         has_actions=true
     fi
 
     if [ "$has_actions" = false ]; then
-        echo "*写作状态良好，无需特别行动*"
+        echo "*집필 상태 양호, 특별한 조치 불필요*"
     fi
 
     cat <<EOF
 
 ---
 
-**检查工具**: check-writing-state.sh
-**版本**: 1.1 (支持 checklist 输出)
+**확인 도구**: check-writing-state.sh
+**버전**: 1.1 (체크리스트 출력 지원)
 EOF
 }
 
-# 主流程
+# 메인 흐름
 main() {
-    # Checklist 模式直接输出并退出
+    # 체크리스트 모드: 직접 출력 후 종료
     if [ "$CHECKLIST_MODE" = true ]; then
         output_checklist
         exit 0
     fi
 
-    # 原有的详细输出模式
-    echo "写作状态检查"
+    # 기존 상세 출력 모드
+    echo "집필 상태 확인"
     echo "============"
-    echo "当前故事：$STORY_NAME"
+    echo "현재 스토리: $STORY_NAME"
     echo ""
 
     if ! check_methodology_docs; then
@@ -300,7 +300,7 @@ main() {
     check_completed_content
 
     echo ""
-    echo "准备就绪，可以开始写作"
+    echo "준비 완료, 집필을 시작할 수 있습니다"
 }
 
 main

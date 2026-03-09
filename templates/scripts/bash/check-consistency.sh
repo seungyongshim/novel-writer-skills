@@ -1,47 +1,47 @@
 #!/usr/bin/env bash
-# 综合一致性检查脚本
+# 종합 일관성 검사 스크립트
 
 set -e
 
-# 加载通用函数
+# 공통 함수 로드
 SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/common.sh"
 
-# 检查模式
+# 체크리스트 모드 확인
 CHECKLIST_MODE=false
 if [ "$1" = "--checklist" ]; then
     CHECKLIST_MODE=true
 fi
 
-# 获取当前故事目录
+# 현재 스토리 디렉토리 가져오기
 STORY_DIR=$(get_current_story)
 
 if [ -z "$STORY_DIR" ]; then
-    echo "错误: 未找到故事项目" >&2
+    echo "오류: 스토리 프로젝트를 찾을 수 없습니다" >&2
     exit 1
 fi
 
-# 文件路径
+# 파일 경로
 PROGRESS="$STORY_DIR/progress.json"
 PLOT_TRACKER="$STORY_DIR/spec/tracking/plot-tracker.json"
 TIMELINE="$STORY_DIR/spec/tracking/timeline.json"
 RELATIONSHIPS="$STORY_DIR/spec/tracking/relationships.json"
 CHARACTER_STATE="$STORY_DIR/spec/tracking/character-state.json"
 
-# ANSI颜色代码
+# ANSI 색상 코드
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# 统计变量
+# 통계 변수
 TOTAL_CHECKS=0
 PASSED_CHECKS=0
 WARNINGS=0
 ERRORS=0
 
-# 检查函数
+# 검사 함수
 check() {
     local name="$1"
     local condition="$2"
@@ -60,43 +60,43 @@ check() {
 
 warn() {
     local msg="$1"
-    echo -e "${YELLOW}⚠${NC} 警告: $msg"
+    echo -e "${YELLOW}⚠${NC} 경고: $msg"
     ((WARNINGS++))
 }
 
-# 检查章节号一致性
+# 챕터 번호 일관성 검사
 check_chapter_consistency() {
-    echo "📖 检查章节号一致性"
+    echo "📖 챕터 번호 일관성 검사"
     echo "───────────────────"
 
     if [ -f "$PROGRESS" ] && [ -f "$PLOT_TRACKER" ]; then
         PROGRESS_CHAPTER=$(jq -r '.statistics.currentChapter // 0' "$PROGRESS")
         PLOT_CHAPTER=$(jq -r '.currentState.chapter // 0' "$PLOT_TRACKER")
 
-        check "章节号同步" \
+        check "챕터 번호 동기화" \
               "[ '$PROGRESS_CHAPTER' = '$PLOT_CHAPTER' ]" \
               "progress.json(${PROGRESS_CHAPTER}) != plot-tracker.json(${PLOT_CHAPTER})"
 
         if [ -f "$CHARACTER_STATE" ]; then
             CHAR_CHAPTER=$(jq -r '.protagonist.currentStatus.chapter // 0' "$CHARACTER_STATE")
-            check "角色状态章节同步" \
+            check "캐릭터 상태 챕터 동기화" \
                   "[ '$PROGRESS_CHAPTER' = '$CHAR_CHAPTER' ]" \
-                  "与character-state.json(${CHAR_CHAPTER})不一致"
+                  "character-state.json(${CHAR_CHAPTER})과 불일치"
         fi
     else
-        warn "部分追踪文件缺失，无法完成章节检查"
+        warn "일부 추적 파일이 누락되어 챕터 검사를 완료할 수 없습니다"
     fi
 
     echo ""
 }
 
-# 检查时间线连续性
+# 타임라인 연속성 검사
 check_timeline_consistency() {
-    echo "⏰ 检查时间线连续性"
+    echo "⏰ 타임라인 연속성 검사"
     echo "───────────────────"
 
     if [ -f "$TIMELINE" ]; then
-        # 检查时间事件是否按章节递增
+        # 시간 이벤트가 챕터 순으로 증가하는지 확인
         TIMELINE_ISSUES=$(jq '
             .events |
             sort_by(.chapter) |
@@ -105,109 +105,109 @@ check_timeline_consistency() {
                 if $sorted[$i].chapter <= $sorted[$i-1].chapter then . + 1 else . end
             )' "$TIMELINE")
 
-        check "时间事件顺序" \
+        check "시간 이벤트 순서" \
               "[ '$TIMELINE_ISSUES' = '0' ]" \
-              "发现${TIMELINE_ISSUES}个乱序事件"
+              "${TIMELINE_ISSUES}개의 순서 이상 이벤트 발견"
 
-        # 检查当前时间是否更新
+        # 현재 시간 업데이트 여부 확인
         CURRENT_TIME=$(jq -r '.storyTime.current // ""' "$TIMELINE")
-        check "当前时间设置" \
+        check "현재 시간 설정" \
               "[ -n '$CURRENT_TIME' ]" \
-              "当前故事时间未设置"
+              "현재 스토리 시간이 설정되지 않았습니다"
     else
-        warn "时间线文件不存在"
+        warn "타임라인 파일이 존재하지 않습니다"
     fi
 
     echo ""
 }
 
-# 检查角色状态合理性
+# 캐릭터 상태 합리성 검사
 check_character_consistency() {
-    echo "👥 检查角色状态合理性"
+    echo "👥 캐릭터 상태 합리성 검사"
     echo "─────────────────────"
 
     if [ -f "$CHARACTER_STATE" ] && [ -f "$RELATIONSHIPS" ]; then
-        # 检查主角是否存在于两个文件中
+        # 주인공이 두 파일 모두에 존재하는지 확인
         PROTAG_NAME=$(jq -r '.protagonist.name // ""' "$CHARACTER_STATE")
 
         if [ -n "$PROTAG_NAME" ]; then
             HAS_RELATIONS=$(jq --arg name "$PROTAG_NAME" \
                 'has($name)' "$RELATIONSHIPS" 2>/dev/null || echo "false")
 
-            check "主角关系记录" \
+            check "주인공 관계 기록" \
                   "[ '$HAS_RELATIONS' = 'true' ]" \
-                  "主角'$PROTAG_NAME'在relationships.json中无记录"
+                  "주인공 '$PROTAG_NAME'이 relationships.json에 기록되지 않았습니다"
         fi
 
-        # 检查角色位置逻辑
+        # 캐릭터 위치 논리 확인
         LAST_LOCATION=$(jq -r '.protagonist.currentStatus.location // ""' "$CHARACTER_STATE")
-        check "主角位置记录" \
+        check "주인공 위치 기록" \
               "[ -n '$LAST_LOCATION' ]" \
-              "主角当前位置未记录"
+              "주인공의 현재 위치가 기록되지 않았습니다"
     else
-        warn "角色追踪文件不完整"
+        warn "캐릭터 추적 파일이 불완전합니다"
     fi
 
     echo ""
 }
 
-# 检查伏笔回收计划
+# 복선 회수 계획 검사
 check_foreshadowing_plan() {
-    echo "🎯 检查伏笔管理"
+    echo "🎯 복선 관리 검사"
     echo "──────────────"
 
     if [ -f "$PLOT_TRACKER" ]; then
-        # 统计伏笔状态
+        # 복선 상태 집계
         TOTAL_FORESHADOW=$(jq '.foreshadowing | length' "$PLOT_TRACKER")
         ACTIVE_FORESHADOW=$(jq '[.foreshadowing[] | select(.status == "active")] | length' "$PLOT_TRACKER")
 
         if [ -f "$PROGRESS" ]; then
             CURRENT_CHAPTER=$(jq -r '.statistics.currentChapter // 0' "$PROGRESS")
 
-            # 检查超期未回收的伏笔
+            # 미회수 초과 복선 확인 (50챕터 이상)
             OVERDUE=$(jq --arg current "$CURRENT_CHAPTER" '
                 [.foreshadowing[] |
                  select(.status == "active" and .planted.chapter and
                         (($current | tonumber) - .planted.chapter) > 50)] |
                 length' "$PLOT_TRACKER")
 
-            check "伏笔回收及时性" \
+            check "복선 회수 적시성" \
                   "[ '$OVERDUE' = '0' ]" \
-                  "有${OVERDUE}个伏笔超过50章未回收"
+                  "${OVERDUE}개의 복선이 50챕터 이상 미회수"
         fi
 
-        echo "  📊 伏笔统计: 总计${TOTAL_FORESHADOW}个，活跃${ACTIVE_FORESHADOW}个"
+        echo "  📊 복선 통계: 총 ${TOTAL_FORESHADOW}개, 활성 ${ACTIVE_FORESHADOW}개"
 
-        # 警告过多活跃伏笔
+        # 활성 복선 과다 경고
         if [ "$ACTIVE_FORESHADOW" -gt 10 ]; then
-            warn "活跃伏笔过多(${ACTIVE_FORESHADOW}个)，可能造成读者困惑"
+            warn "활성 복선이 과다합니다(${ACTIVE_FORESHADOW}개). 독자 혼란을 야기할 수 있습니다"
         fi
     else
-        warn "情节追踪文件不存在"
+        warn "줄거리 추적 파일이 존재하지 않습니다"
     fi
 
     echo ""
 }
 
-# 检查文件完整性
+# 파일 무결성 검사
 check_file_integrity() {
-    echo "📁 检查文件完整性"
+    echo "📁 파일 무결성 검사"
     echo "────────────────"
 
-    check "progress.json" "[ -f '$PROGRESS' ]" "文件不存在"
-    check "plot-tracker.json" "[ -f '$PLOT_TRACKER' ]" "文件不存在"
-    check "timeline.json" "[ -f '$TIMELINE' ]" "文件不存在"
-    check "relationships.json" "[ -f '$RELATIONSHIPS' ]" "文件不存在"
-    check "character-state.json" "[ -f '$CHARACTER_STATE' ]" "文件不存在"
+    check "progress.json" "[ -f '$PROGRESS' ]" "파일이 존재하지 않습니다"
+    check "plot-tracker.json" "[ -f '$PLOT_TRACKER' ]" "파일이 존재하지 않습니다"
+    check "timeline.json" "[ -f '$TIMELINE' ]" "파일이 존재하지 않습니다"
+    check "relationships.json" "[ -f '$RELATIONSHIPS' ]" "파일이 존재하지 않습니다"
+    check "character-state.json" "[ -f '$CHARACTER_STATE' ]" "파일이 존재하지 않습니다"
 
-    # 检查JSON格式是否有效
+    # JSON 형식 유효성 검사
     for file in "$PROGRESS" "$PLOT_TRACKER" "$TIMELINE" "$RELATIONSHIPS" "$CHARACTER_STATE"; do
         if [ -f "$file" ]; then
             filename=$(basename "$file")
             if jq empty "$file" 2>/dev/null; then
-                check "$filename格式" "true" ""
+                check "${filename} 형식" "true" ""
             else
-                check "$filename格式" "false" "JSON格式无效"
+                check "${filename} 형식" "false" "JSON 형식이 유효하지 않습니다"
             fi
         fi
     done
@@ -215,10 +215,10 @@ check_file_integrity() {
     echo ""
 }
 
-# 生成报告
+# 보고서 생성
 generate_report() {
     echo "═══════════════════════════════════════"
-    echo "📊 综合一致性检查报告"
+    echo "📊 종합 일관성 검사 보고서"
     echo "═══════════════════════════════════════"
     echo ""
 
@@ -229,29 +229,29 @@ generate_report() {
     check_foreshadowing_plan
 
     echo "═══════════════════════════════════════"
-    echo "📈 检查结果汇总"
+    echo "📈 검사 결과 요약"
     echo "───────────────────"
-    echo "  总检查项: ${TOTAL_CHECKS}"
-    echo -e "  ${GREEN}通过: ${PASSED_CHECKS}${NC}"
-    echo -e "  ${YELLOW}警告: ${WARNINGS}${NC}"
-    echo -e "  ${RED}错误: ${ERRORS}${NC}"
+    echo "  총 검사 항목: ${TOTAL_CHECKS}"
+    echo -e "  ${GREEN}통과: ${PASSED_CHECKS}${NC}"
+    echo -e "  ${YELLOW}경고: ${WARNINGS}${NC}"
+    echo -e "  ${RED}오류: ${ERRORS}${NC}"
 
     if [ "$ERRORS" -eq 0 ] && [ "$WARNINGS" -eq 0 ]; then
         echo ""
-        echo -e "${GREEN}✅ 完美！所有检查项全部通过${NC}"
+        echo -e "${GREEN}✅ 완벽! 모든 검사 항목을 통과했습니다${NC}"
     elif [ "$ERRORS" -eq 0 ]; then
         echo ""
-        echo -e "${YELLOW}⚠️  存在${WARNINGS}个警告，建议关注${NC}"
+        echo -e "${YELLOW}⚠️  ${WARNINGS}개의 경고가 있습니다. 확인을 권장합니다${NC}"
     else
         echo ""
-        echo -e "${RED}❌ 发现${ERRORS}个错误，需要修正${NC}"
+        echo -e "${RED}❌ ${ERRORS}개의 오류가 발견되었습니다. 수정이 필요합니다${NC}"
     fi
 
     echo "═══════════════════════════════════════"
     echo ""
-    echo "检查时间: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "검사 시간: $(date '+%Y-%m-%d %H:%M:%S')"
 
-    # 记录检查结果
+    # 검사 결과 기록
     if [ -f "$STORY_DIR/spec/tracking" ]; then
         echo "{
             \"timestamp\": \"$(date -Iseconds)\",
@@ -263,11 +263,11 @@ generate_report() {
     fi
 }
 
-# 生成 checklist 格式输出
+# 체크리스트 형식 출력 생성
 output_checklist() {
-    # 静默执行检查逻辑
-    exec 3>&1 4>&2  # 保存原始输出
-    exec 1>/dev/null 2>&1  # 重定向到null
+    # 검사 로직을 묵음으로 실행
+    exec 3>&1 4>&2  # 원래 출력 저장
+    exec 1>/dev/null 2>&1  # null로 리디렉션
 
     check_file_integrity
     check_chapter_consistency
@@ -275,9 +275,9 @@ output_checklist() {
     check_character_consistency
     check_foreshadowing_plan
 
-    exec 1>&3 2>&4  # 恢复输出
+    exec 1>&3 2>&4  # 출력 복원
 
-    # 获取章节号用于检查
+    # 검사에 사용할 챕터 번호 가져오기
     local progress_chapter=""
     local plot_chapter=""
     local char_chapter=""
@@ -289,7 +289,7 @@ output_checklist() {
         char_chapter=$(jq -r '.protagonist.currentStatus.chapter // 0' "$CHARACTER_STATE" 2>/dev/null || echo "0")
     fi
 
-    # 检查伏笔状态
+    # 복선 상태 확인
     local total_foreshadow=0
     local active_foreshadow=0
     local overdue_foreshadow=0
@@ -303,145 +303,145 @@ output_checklist() {
         fi
     fi
 
-    # 输出 checklist 格式
+    # 체크리스트 형식 출력
     cat <<EOF
-# 数据同步一致性检查 Checklist
+# 데이터 동기화 일관성 검사 체크리스트
 
-**检查时间**: $(date '+%Y-%m-%d %H:%M:%S')
-**检查对象**: spec/tracking/ 目录所有JSON文件
-**检查范围**: 文件完整性、章节同步、时间线连续性、角色状态、伏笔管理
+**검사 시간**: $(date '+%Y-%m-%d %H:%M:%S')
+**검사 대상**: spec/tracking/ 디렉토리 모든 JSON 파일
+**검사 범위**: 파일 무결성, 챕터 동기화, 타임라인 연속성, 캐릭터 상태, 복선 관리
 
 ---
 
-## 文件完整性
+## 파일 무결성
 
-- [$([ -f "$PROGRESS" ] && echo "x" || echo " ")] CHK001 progress.json 存在且格式有效
-- [$([ -f "$PLOT_TRACKER" ] && echo "x" || echo " ")] CHK002 plot-tracker.json 存在且格式有效
-- [$([ -f "$TIMELINE" ] && echo "x" || echo " ")] CHK003 timeline.json 存在且格式有效
-- [$([ -f "$RELATIONSHIPS" ] && echo "x" || echo " ")] CHK004 relationships.json 存在且格式有效
-- [$([ -f "$CHARACTER_STATE" ] && echo "x" || echo " ")] CHK005 character-state.json 存在且格式有效
+- [$([ -f "$PROGRESS" ] && echo "x" || echo " ")] CHK001 progress.json 존재 및 형식 유효
+- [$([ -f "$PLOT_TRACKER" ] && echo "x" || echo " ")] CHK002 plot-tracker.json 존재 및 형식 유효
+- [$([ -f "$TIMELINE" ] && echo "x" || echo " ")] CHK003 timeline.json 존재 및 형식 유효
+- [$([ -f "$RELATIONSHIPS" ] && echo "x" || echo " ")] CHK004 relationships.json 존재 및 형식 유효
+- [$([ -f "$CHARACTER_STATE" ] && echo "x" || echo " ")] CHK005 character-state.json 존재 및 형식 유효
 
-## 章节号同步
+## 챕터 번호 동기화
 
 EOF
 
     if [ "$progress_chapter" = "$plot_chapter" ]; then
-        echo "- [x] CHK006 progress.json 与 plot-tracker.json 章节号一致（第 $progress_chapter 章）"
+        echo "- [x] CHK006 progress.json과 plot-tracker.json 챕터 번호 일치 (제 $progress_chapter 장)"
     else
-        echo "- [!] CHK006 progress.json(${progress_chapter}) 与 plot-tracker.json(${plot_chapter}) 章节号不一致"
+        echo "- [!] CHK006 progress.json(${progress_chapter})과 plot-tracker.json(${plot_chapter}) 챕터 번호 불일치"
     fi
 
     if [ -n "$char_chapter" ]; then
         if [ "$progress_chapter" = "$char_chapter" ]; then
-            echo "- [x] CHK007 progress.json 与 character-state.json 章节号一致"
+            echo "- [x] CHK007 progress.json과 character-state.json 챕터 번호 일치"
         else
-            echo "- [!] CHK007 progress.json(${progress_chapter}) 与 character-state.json(${char_chapter}) 章节号不一致"
+            echo "- [!] CHK007 progress.json(${progress_chapter})과 character-state.json(${char_chapter}) 챕터 번호 불일치"
         fi
     else
-        echo "- [ ] CHK007 character-state.json 章节号检查（文件不存在或缺少数据）"
+        echo "- [ ] CHK007 character-state.json 챕터 번호 검사 (파일 없음 또는 데이터 부재)"
     fi
 
     cat <<EOF
 
-## 时间线连续性
+## 타임라인 연속성
 
-- [$([ -f "$TIMELINE" ] && echo "x" || echo " ")] CHK008 时间线事件按章节有序排列
-- [$([ -f "$TIMELINE" ] && echo "x" || echo " ")] CHK009 当前故事时间已设置
+- [$([ -f "$TIMELINE" ] && echo "x" || echo " ")] CHK008 타임라인 이벤트가 챕터 순으로 정렬
+- [$([ -f "$TIMELINE" ] && echo "x" || echo " ")] CHK009 현재 스토리 시간 설정 완료
 
-## 角色状态
+## 캐릭터 상태
 
 EOF
 
     if [ -f "$CHARACTER_STATE" ] && [ -f "$RELATIONSHIPS" ]; then
         local protag_name=$(jq -r '.protagonist.name // ""' "$CHARACTER_STATE" 2>/dev/null)
         if [ -n "$protag_name" ]; then
-            echo "- [x] CHK010 主角信息完整（$protag_name）"
+            echo "- [x] CHK010 주인공 정보 완비 ($protag_name)"
             local has_relations=$(jq --arg name "$protag_name" 'has($name)' "$RELATIONSHIPS" 2>/dev/null || echo "false")
             if [ "$has_relations" = "true" ]; then
-                echo "- [x] CHK011 主角在 relationships.json 中有关系记录"
+                echo "- [x] CHK011 주인공 relationships.json에 관계 기록 있음"
             else
-                echo "- [!] CHK011 主角'$protag_name'在 relationships.json 中无关系记录"
+                echo "- [!] CHK011 주인공 '$protag_name' relationships.json에 관계 기록 없음"
             fi
         else
-            echo "- [ ] CHK010 主角信息完整（缺少数据）"
-            echo "- [ ] CHK011 主角关系记录（缺少数据）"
+            echo "- [ ] CHK010 주인공 정보 완비 (데이터 부재)"
+            echo "- [ ] CHK011 주인공 관계 기록 (데이터 부재)"
         fi
 
         local last_location=$(jq -r '.protagonist.currentStatus.location // ""' "$CHARACTER_STATE" 2>/dev/null)
         if [ -n "$last_location" ]; then
-            echo "- [x] CHK012 主角当前位置已记录（$last_location）"
+            echo "- [x] CHK012 주인공 현재 위치 기록됨 ($last_location)"
         else
-            echo "- [!] CHK012 主角当前位置未记录"
+            echo "- [!] CHK012 주인공 현재 위치 미기록"
         fi
     else
-        echo "- [ ] CHK010 主角信息完整（文件不存在）"
-        echo "- [ ] CHK011 主角关系记录（文件不存在）"
-        echo "- [ ] CHK012 主角当前位置已记录（文件不存在）"
+        echo "- [ ] CHK010 주인공 정보 완비 (파일 없음)"
+        echo "- [ ] CHK011 주인공 관계 기록 (파일 없음)"
+        echo "- [ ] CHK012 주인공 현재 위치 기록 (파일 없음)"
     fi
 
     cat <<EOF
 
-## 伏笔管理
+## 복선 관리
 
 EOF
 
     if [ "$total_foreshadow" -gt 0 ]; then
-        echo "- [x] CHK013 伏笔记录存在（总计 $total_foreshadow 个，活跃 $active_foreshadow 个）"
+        echo "- [x] CHK013 복선 기록 존재 (총 $total_foreshadow 개, 활성 $active_foreshadow 개)"
 
         if [ "$overdue_foreshadow" -eq 0 ]; then
-            echo "- [x] CHK014 伏笔回收及时（无超期未回收）"
+            echo "- [x] CHK014 복선 회수 적시성 (미회수 초과 없음)"
         else
-            echo "- [!] CHK014 伏笔回收及时（有 $overdue_foreshadow 个超过50章未回收）"
+            echo "- [!] CHK014 복선 회수 적시성 ($overdue_foreshadow 개가 50챕터 이상 미회수)"
         fi
 
         if [ "$active_foreshadow" -le 10 ]; then
-            echo "- [x] CHK015 活跃伏笔数量合理（$active_foreshadow ≤ 10）"
+            echo "- [x] CHK015 활성 복선 수 적정 ($active_foreshadow ≤ 10)"
         else
-            echo "- [!] CHK015 活跃伏笔数量过多（$active_foreshadow > 10，可能造成读者困惑）"
+            echo "- [!] CHK015 활성 복선 수 과다 ($active_foreshadow > 10, 독자 혼란 가능)"
         fi
     else
-        echo "- [ ] CHK013 伏笔记录存在（未找到伏笔记录）"
-        echo "- [ ] CHK014 伏笔回收及时（无数据）"
-        echo "- [ ] CHK015 活跃伏笔数量合理（无数据）"
+        echo "- [ ] CHK013 복선 기록 존재 (복선 기록 없음)"
+        echo "- [ ] CHK014 복선 회수 적시성 (데이터 없음)"
+        echo "- [ ] CHK015 활성 복선 수 적정 (데이터 없음)"
     fi
 
     cat <<EOF
 
 ---
 
-## 检查统计
+## 검사 통계
 
-- **总检查项**: ${TOTAL_CHECKS}
-- **已通过**: ${PASSED_CHECKS}
-- **警告**: ${WARNINGS}
-- **错误**: ${ERRORS}
+- **총 검사 항목**: ${TOTAL_CHECKS}
+- **통과**: ${PASSED_CHECKS}
+- **경고**: ${WARNINGS}
+- **오류**: ${ERRORS}
 
 ---
 
-## 后续行动
+## 후속 조치
 
 EOF
 
     if [ "$ERRORS" -gt 0 ]; then
-        echo "- [ ] 修复上述标记为 [!] 的不一致问题"
+        echo "- [ ] 위 [!] 표시된 불일치 문제 수정"
     fi
     if [ "$WARNINGS" -gt 0 ]; then
-        echo "- [ ] 关注警告项，考虑是否需要改进"
+        echo "- [ ] 경고 항목 확인 후 개선 필요 여부 검토"
     fi
     if [ "$ERRORS" -eq 0 ] && [ "$WARNINGS" -eq 0 ]; then
-        echo "*所有检查通过，无需行动*"
+        echo "*모든 검사 통과, 조치 불필요*"
     fi
 
     cat <<EOF
 
 ---
 
-**检查工具**: check-consistency.sh
-**版本**: 1.1 (支持 checklist 输出)
+**검사 도구**: check-consistency.sh
+**버전**: 1.1 (체크리스트 출력 지원)
 EOF
 }
 
-# 主函数
+# 메인 함수
 main() {
     if [ "$CHECKLIST_MODE" = true ]; then
         output_checklist
@@ -449,15 +449,15 @@ main() {
         generate_report
     fi
 
-    # 根据结果返回适当的退出码
+    # 결과에 따른 적절한 종료 코드 반환
     if [ "$ERRORS" -gt 0 ]; then
         exit 1
     elif [ "$WARNINGS" -gt 0 ]; then
-        exit 0  # 警告不算失败
+        exit 0  # 경고는 실패로 간주하지 않음
     else
         exit 0
     fi
 }
 
-# 执行主函数
+# 메인 함수 실행
 main

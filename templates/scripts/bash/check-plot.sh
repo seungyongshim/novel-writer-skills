@@ -1,55 +1,55 @@
 #!/usr/bin/env bash
-# 检查情节发展的一致性和连贯性
+# 줄거리 전개의 일관성과 연속성 검사
 
 set -e
 
-# 加载通用函数
+# 공통 함수 로드
 SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/common.sh"
 
-# 检查模式
+# 체크리스트 모드 확인
 CHECKLIST_MODE=false
 if [ "$1" = "--checklist" ]; then
     CHECKLIST_MODE=true
 fi
 
-# 获取当前故事目录
+# 현재 스토리 디렉토리 가져오기
 STORY_DIR=$(get_current_story)
 
 if [ -z "$STORY_DIR" ]; then
-    echo "错误: 未找到故事项目" >&2
+    echo "오류: 스토리 프로젝트를 찾을 수 없습니다" >&2
     exit 1
 fi
 
-# 文件路径
+# 파일 경로
 PLOT_TRACKER="$STORY_DIR/spec/tracking/plot-tracker.json"
 OUTLINE="$STORY_DIR/outline.md"
 PROGRESS="$STORY_DIR/progress.json"
 
-# 检查必要文件
+# 필수 파일 확인
 check_required_files() {
     local missing=false
 
     if [ ! -f "$PLOT_TRACKER" ]; then
-        echo "⚠️  未找到情节追踪文件，正在创建..." >&2
+        echo "⚠️  줄거리 추적 파일을 찾을 수 없어 생성 중..." >&2
         mkdir -p "$STORY_DIR/spec/tracking"
-        # 复制模板
+        # 템플릿 복사
         if [ -f "$SCRIPT_DIR/../../templates/tracking/plot-tracker.json" ]; then
             cp "$SCRIPT_DIR/../../templates/tracking/plot-tracker.json" "$PLOT_TRACKER"
         else
-            echo "错误: 无法找到模板文件" >&2
+            echo "오류: 템플릿 파일을 찾을 수 없습니다" >&2
             exit 1
         fi
     fi
 
     if [ ! -f "$OUTLINE" ]; then
-        echo "错误: 未找到章节大纲 (outline.md)" >&2
-        echo "请先使用 /outline 命令创建大纲" >&2
+        echo "오류: 챕터 개요를 찾을 수 없습니다 (outline.md)" >&2
+        echo "먼저 /outline 명령어를 사용하여 개요를 작성하세요" >&2
         exit 1
     fi
 }
 
-# 读取当前进度
+# 현재 진행도 읽기
 get_current_progress() {
     if [ -f "$PROGRESS" ]; then
         CURRENT_CHAPTER=$(jq -r '.statistics.currentChapter // 1' "$PROGRESS")
@@ -60,60 +60,60 @@ get_current_progress() {
     fi
 }
 
-# 分析情节对齐
+# 줄거리 정합성 분석
 analyze_plot_alignment() {
-    echo "📊 情节发展检查报告"
+    echo "📊 줄거리 전개 검사 보고서"
     echo "━━━━━━━━━━━━━━━━━━━━"
 
-    # 当前进度
-    echo "📍 当前进度：第${CURRENT_CHAPTER}章（第${CURRENT_VOLUME}卷）"
+    # 현재 진행도
+    echo "📍 현재 진행: 제${CURRENT_CHAPTER}장 (제${CURRENT_VOLUME}권)"
 
-    # 读取情节追踪数据
+    # 줄거리 추적 데이터 읽기
     if [ -f "$PLOT_TRACKER" ]; then
-        MAIN_PLOT=$(jq -r '.plotlines.main.currentNode // "未设定"' "$PLOT_TRACKER")
+        MAIN_PLOT=$(jq -r '.plotlines.main.currentNode // "미설정"' "$PLOT_TRACKER")
         PLOT_STATUS=$(jq -r '.plotlines.main.status // "unknown"' "$PLOT_TRACKER")
-        echo "📖 主线进度：$MAIN_PLOT [$PLOT_STATUS]"
+        echo "📖 메인 스토리 진행: $MAIN_PLOT [$PLOT_STATUS]"
 
-        # 完成的节点
+        # 완료된 노드
         COMPLETED_COUNT=$(jq '.plotlines.main.completedNodes | length' "$PLOT_TRACKER")
         echo ""
-        echo "✅ 已完成节点：${COMPLETED_COUNT}个"
+        echo "✅ 완료된 노드: ${COMPLETED_COUNT}개"
         jq -r '.plotlines.main.completedNodes[]? | "  • " + .' "$PLOT_TRACKER" 2>/dev/null || true
 
-        # 即将到来的节点
+        # 다가오는 노드
         UPCOMING_COUNT=$(jq '.plotlines.main.upcomingNodes | length' "$PLOT_TRACKER")
         if [ "$UPCOMING_COUNT" -gt 0 ]; then
             echo ""
-            echo "→ 接下来的节点："
+            echo "→ 다음 노드:"
             jq -r '.plotlines.main.upcomingNodes[0:3][]? | "  • " + .' "$PLOT_TRACKER" 2>/dev/null || true
         fi
     fi
 }
 
-# 检查伏笔状态
+# 복선 상태 확인
 check_foreshadowing() {
     echo ""
-    echo "🎯 伏笔追踪"
+    echo "🎯 복선 추적"
     echo "───────────"
 
     if [ -f "$PLOT_TRACKER" ]; then
-        # 统计伏笔
+        # 복선 집계
         TOTAL_FORESHADOW=$(jq '.foreshadowing | length' "$PLOT_TRACKER")
         ACTIVE_FORESHADOW=$(jq '[.foreshadowing[] | select(.status == "active")] | length' "$PLOT_TRACKER")
         RESOLVED_FORESHADOW=$(jq '[.foreshadowing[] | select(.status == "resolved")] | length' "$PLOT_TRACKER")
 
-        echo "统计：总计${TOTAL_FORESHADOW}个，活跃${ACTIVE_FORESHADOW}个，已回收${RESOLVED_FORESHADOW}个"
+        echo "통계: 총 ${TOTAL_FORESHADOW}개, 활성 ${ACTIVE_FORESHADOW}개, 회수됨 ${RESOLVED_FORESHADOW}개"
 
-        # 列出待处理的伏笔
+        # 처리 대기 중인 복선 목록
         if [ "$ACTIVE_FORESHADOW" -gt 0 ]; then
             echo ""
-            echo "⚠️ 待处理伏笔："
+            echo "⚠️ 처리 대기 복선:"
             jq -r '.foreshadowing[] | select(.status == "active") |
-                "  • " + .content + "（第" + (.planted.chapter | tostring) + "章埋设）"' \
+                "  • " + .content + " (제" + (.planted.chapter | tostring) + "장에서 배치)"' \
                 "$PLOT_TRACKER" 2>/dev/null || true
         fi
 
-        # 检查是否有过期的伏笔（超过30章未处理）
+        # 만료된 복선 확인 (30챕터 이상 미처리)
         OVERDUE=$(jq --arg current "$CURRENT_CHAPTER" '
             [.foreshadowing[] |
              select(.status == "active" and .planted.chapter and
@@ -122,67 +122,67 @@ check_foreshadowing() {
 
         if [ "$OVERDUE" -gt 0 ]; then
             echo ""
-            echo "⚠️ 警告：有${OVERDUE}个伏笔超过30章未处理"
+            echo "⚠️ 경고: ${OVERDUE}개의 복선이 30챕터 이상 미처리"
         fi
     fi
 }
 
-# 检查冲突发展
+# 갈등 전개 확인
 check_conflicts() {
     echo ""
-    echo "⚔️ 冲突追踪"
+    echo "⚔️ 갈등 추적"
     echo "───────────"
 
     if [ -f "$PLOT_TRACKER" ]; then
         ACTIVE_CONFLICTS=$(jq '.conflicts.active | length' "$PLOT_TRACKER")
 
         if [ "$ACTIVE_CONFLICTS" -gt 0 ]; then
-            echo "当前活跃冲突：${ACTIVE_CONFLICTS}个"
+            echo "현재 활성 갈등: ${ACTIVE_CONFLICTS}개"
             jq -r '.conflicts.active[] |
                 "  • " + .name + " [" + .intensity + "]"' \
                 "$PLOT_TRACKER" 2>/dev/null || true
         else
-            echo "暂无活跃冲突"
+            echo "현재 활성 갈등 없음"
         fi
     fi
 }
 
-# 生成建议
+# 제안 생성
 generate_suggestions() {
     echo ""
-    echo "💡 建议"
+    echo "💡 제안"
     echo "───────"
 
-    # 基于当前章节给出建议
+    # 현재 챕터 기반 제안
     if [ "$CURRENT_CHAPTER" -lt 10 ]; then
-        echo "• 前10章是关键，确保有足够的钩子吸引读者"
+        echo "• 초반 10장은 매우 중요합니다. 독자를 끌어당길 충분한 훅이 있는지 확인하세요"
     elif [ "$CURRENT_CHAPTER" -lt 30 ]; then
-        echo "• 接近第一个小高潮，检查冲突是否足够激烈"
+        echo "• 첫 번째 소규모 클라이맥스에 접근 중입니다. 갈등이 충분히 격렬한지 확인하세요"
     elif [ "$((CURRENT_CHAPTER % 60))" -gt 50 ]; then
-        echo "• 接近卷尾，准备高潮和悬念设置"
+        echo "• 권말에 접근 중입니다. 클라이맥스와 서스펜스 설정을 준비하세요"
     fi
 
-    # 基于伏笔状态给建议
+    # 복선 상태 기반 제안
     if [ "$ACTIVE_FORESHADOW" -gt 5 ]; then
-        echo "• 活跃伏笔较多，考虑在接下来几章回收部分"
+        echo "• 활성 복선이 많습니다. 다음 몇 장에서 일부를 회수하는 것을 고려하세요"
     fi
 
-    # 基于冲突状态给建议
+    # 갈등 상태 기반 제안
     if [ "$ACTIVE_CONFLICTS" -eq 0 ] && [ "$CURRENT_CHAPTER" -gt 5 ]; then
-        echo "• 当前无活跃冲突，考虑引入新的矛盾点"
+        echo "• 현재 활성 갈등이 없습니다. 새로운 갈등 포인트 도입을 고려하세요"
     fi
 }
 
-# 生成 checklist 格式输出
+# 체크리스트 형식 출력 생성
 output_checklist() {
-    # 检查必要文件（静默）
+    # 필수 파일 확인 (묵음)
     check_required_files > /dev/null 2>&1 || true
 
-    # 获取当前进度
+    # 현재 진행도 가져오기
     get_current_progress
 
-    # 收集数据
-    local main_plot="未设定"
+    # 데이터 수집
+    local main_plot="미설정"
     local plot_status="unknown"
     local completed_count=0
     local upcoming_count=0
@@ -193,7 +193,7 @@ output_checklist() {
     local active_conflicts=0
 
     if [ -f "$PLOT_TRACKER" ]; then
-        main_plot=$(jq -r '.plotlines.main.currentNode // "未设定"' "$PLOT_TRACKER")
+        main_plot=$(jq -r '.plotlines.main.currentNode // "미설정"' "$PLOT_TRACKER")
         plot_status=$(jq -r '.plotlines.main.status // "unknown"' "$PLOT_TRACKER")
         completed_count=$(jq '.plotlines.main.completedNodes | length' "$PLOT_TRACKER")
         upcoming_count=$(jq '.plotlines.main.upcomingNodes | length' "$PLOT_TRACKER")
@@ -211,147 +211,147 @@ output_checklist() {
         active_conflicts=$(jq '.conflicts.active | length' "$PLOT_TRACKER")
     fi
 
-    # 输出 checklist 格式
+    # 체크리스트 형식 출력
     cat <<EOF
-# 情节对齐检查 Checklist
+# 줄거리 정합성 검사 체크리스트
 
-**检查时间**: $(date '+%Y-%m-%d %H:%M:%S')
-**检查对象**: plot-tracker.json, outline.md, progress.json
-**当前进度**: 第 ${CURRENT_CHAPTER} 章（第 ${CURRENT_VOLUME} 卷）
+**검사 시간**: $(date '+%Y-%m-%d %H:%M:%S')
+**검사 대상**: plot-tracker.json, outline.md, progress.json
+**현재 진행**: 제 ${CURRENT_CHAPTER} 장 (제 ${CURRENT_VOLUME} 권)
 
 ---
 
-## 文件完整性
+## 파일 무결성
 
-- [$([ -f "$PLOT_TRACKER" ] && echo "x" || echo " ")] CHK001 plot-tracker.json 存在
-- [$([ -f "$OUTLINE" ] && echo "x" || echo " ")] CHK002 outline.md 存在
-- [$([ -f "$PROGRESS" ] && echo "x" || echo " ")] CHK003 progress.json 存在
+- [$([ -f "$PLOT_TRACKER" ] && echo "x" || echo " ")] CHK001 plot-tracker.json 존재
+- [$([ -f "$OUTLINE" ] && echo "x" || echo " ")] CHK002 outline.md 존재
+- [$([ -f "$PROGRESS" ] && echo "x" || echo " ")] CHK003 progress.json 존재
 
-## 情节进度
+## 줄거리 진행
 
-- [$([ "$plot_status" != "unknown" ] && echo "x" || echo " ")] CHK004 主线情节状态已更新（当前：$plot_status）
-- [x] CHK005 主线情节节点进度：$main_plot
-- [$([ $completed_count -gt 0 ] && echo "x" || echo " ")] CHK006 已完成情节节点（$completed_count 个）
-- [$([ $upcoming_count -gt 0 ] && echo "x" || echo " ")] CHK007 后续情节节点已规划（$upcoming_count 个）
+- [$([ "$plot_status" != "unknown" ] && echo "x" || echo " ")] CHK004 메인 줄거리 상태 업데이트됨 (현재: $plot_status)
+- [x] CHK005 메인 줄거리 노드 진행: $main_plot
+- [$([ $completed_count -gt 0 ] && echo "x" || echo " ")] CHK006 완료된 줄거리 노드 ($completed_count 개)
+- [$([ $upcoming_count -gt 0 ] && echo "x" || echo " ")] CHK007 후속 줄거리 노드 계획됨 ($upcoming_count 개)
 
-## 伏笔管理
+## 복선 관리
 
 EOF
 
     if [ $total_foreshadow -gt 0 ]; then
-        echo "- [x] CHK008 伏笔记录存在（总计 $total_foreshadow 个）"
-        echo "- [x] CHK009 伏笔状态跟踪（活跃 $active_foreshadow 个，已回收 $resolved_foreshadow 个）"
+        echo "- [x] CHK008 복선 기록 존재 (총 $total_foreshadow 개)"
+        echo "- [x] CHK009 복선 상태 추적 (활성 $active_foreshadow 개, 회수됨 $resolved_foreshadow 개)"
 
         if [ $overdue_foreshadow -eq 0 ]; then
-            echo "- [x] CHK010 伏笔回收及时（无超过30章未处理）"
+            echo "- [x] CHK010 복선 회수 적시성 (30챕터 초과 미처리 없음)"
         else
-            echo "- [!] CHK010 伏笔回收及时（⚠️ ${overdue_foreshadow}个超过30章未处理）"
+            echo "- [!] CHK010 복선 회수 적시성 (⚠️ ${overdue_foreshadow}개가 30챕터 이상 미처리)"
         fi
 
         if [ $active_foreshadow -le 5 ]; then
-            echo "- [x] CHK011 活跃伏笔数量合理（$active_foreshadow ≤ 5）"
+            echo "- [x] CHK011 활성 복선 수 적정 ($active_foreshadow ≤ 5)"
         elif [ $active_foreshadow -le 10 ]; then
-            echo "- [!] CHK011 活跃伏笔数量偏多（$active_foreshadow 个，建议回收部分）"
+            echo "- [!] CHK011 활성 복선 수 다소 많음 ($active_foreshadow 개, 일부 회수 권장)"
         else
-            echo "- [!] CHK011 活跃伏笔数量过多（⚠️ $active_foreshadow > 10，可能造成混乱）"
+            echo "- [!] CHK011 활성 복선 수 과다 (⚠️ $active_foreshadow > 10, 혼란 야기 가능)"
         fi
     else
-        echo "- [ ] CHK008 伏笔记录存在（未找到伏笔记录）"
-        echo "- [ ] CHK009 伏笔状态跟踪（无数据）"
-        echo "- [ ] CHK010 伏笔回收及时（无数据）"
-        echo "- [ ] CHK011 活跃伏笔数量合理（无数据）"
+        echo "- [ ] CHK008 복선 기록 존재 (복선 기록 없음)"
+        echo "- [ ] CHK009 복선 상태 추적 (데이터 없음)"
+        echo "- [ ] CHK010 복선 회수 적시성 (데이터 없음)"
+        echo "- [ ] CHK011 활성 복선 수 적정 (데이터 없음)"
     fi
 
     cat <<EOF
 
-## 冲突发展
+## 갈등 전개
 
 EOF
 
     if [ $active_conflicts -gt 0 ]; then
-        echo "- [x] CHK012 存在活跃冲突（$active_conflicts 个）"
+        echo "- [x] CHK012 활성 갈등 존재 ($active_conflicts 개)"
     elif [ $CURRENT_CHAPTER -gt 5 ]; then
-        echo "- [!] CHK012 存在活跃冲突（⚠️ 当前无活跃冲突，建议引入矛盾点）"
+        echo "- [!] CHK012 활성 갈등 존재 (⚠️ 현재 활성 갈등 없음, 갈등 포인트 도입 권장)"
     else
-        echo "- [x] CHK012 存在活跃冲突（前期章节，可暂无冲突）"
+        echo "- [x] CHK012 활성 갈등 존재 (초반부 챕터, 갈등 없어도 무방)"
     fi
 
     cat <<EOF
 
-## 节奏建议
+## 리듬 제안
 
 EOF
 
-    # 基于当前章节给出检查项
+    # 현재 챕터 기반 검사 항목
     if [ $CURRENT_CHAPTER -lt 10 ]; then
-        echo "- [ ] CHK013 前10章钩子设置（确保有足够吸引力）"
+        echo "- [ ] CHK013 초반 10장 훅 설정 (충분한 흡인력 확보)"
     elif [ $CURRENT_CHAPTER -lt 30 ]; then
-        echo "- [ ] CHK014 第一个小高潮准备（检查冲突强度）"
+        echo "- [ ] CHK014 첫 번째 소규모 클라이맥스 준비 (갈등 강도 확인)"
     elif [ $((CURRENT_CHAPTER % 60)) -gt 50 ]; then
-        echo "- [ ] CHK015 卷尾高潮设置（准备悬念和高潮）"
+        echo "- [ ] CHK015 권말 클라이맥스 설정 (서스펜스와 클라이맥스 준비)"
     else
-        echo "- [x] CHK016 节奏正常（无特殊节点提醒）"
+        echo "- [x] CHK016 리듬 정상 (특수 노드 알림 없음)"
     fi
 
     cat <<EOF
 
 ---
 
-## 后续行动
+## 후속 조치
 
 EOF
 
-    # 动态生成后续行动
+    # 동적 후속 조치 생성
     local has_actions=false
 
     if [ $overdue_foreshadow -gt 0 ]; then
-        echo "- [ ] 回收超期伏笔（${overdue_foreshadow}个）"
+        echo "- [ ] 만료 복선 회수 (${overdue_foreshadow}개)"
         has_actions=true
     fi
 
     if [ $active_foreshadow -gt 10 ]; then
-        echo "- [ ] 减少活跃伏笔数量（当前 $active_foreshadow 个）"
+        echo "- [ ] 활성 복선 수 줄이기 (현재 $active_foreshadow 개)"
         has_actions=true
     fi
 
     if [ $active_conflicts -eq 0 ] && [ $CURRENT_CHAPTER -gt 5 ]; then
-        echo "- [ ] 引入新的冲突点"
+        echo "- [ ] 새로운 갈등 포인트 도입"
         has_actions=true
     fi
 
     if [ $upcoming_count -eq 0 ]; then
-        echo "- [ ] 规划后续情节节点"
+        echo "- [ ] 후속 줄거리 노드 계획"
         has_actions=true
     fi
 
     if [ "$has_actions" = false ]; then
-        echo "*当前情节发展良好，无需特别行动*"
+        echo "*현재 줄거리 전개 양호, 특별한 조치 불필요*"
     fi
 
     cat <<EOF
 
 ---
 
-**检查工具**: check-plot.sh
-**版本**: 1.1 (支持 checklist 输出)
+**검사 도구**: check-plot.sh
+**버전**: 1.1 (체크리스트 출력 지원)
 EOF
 }
 
-# 主函数
+# 메인 함수
 main() {
     if [ "$CHECKLIST_MODE" = true ]; then
         output_checklist
     else
-        echo "🔍 开始检查情节一致性..."
+        echo "🔍 줄거리 일관성 검사 시작..."
         echo ""
 
-        # 检查必要文件
+        # 필수 파일 확인
         check_required_files
 
-        # 获取当前进度
+        # 현재 진행도 가져오기
         get_current_progress
 
-        # 执行各项检查
+        # 각 항목 검사 실행
         analyze_plot_alignment
         check_foreshadowing
         check_conflicts
@@ -359,10 +359,10 @@ main() {
 
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━"
-        echo "✅ 检查完成"
+        echo "✅ 검사 완료"
     fi
 
-    # 更新检查时间
+    # 검사 시간 업데이트
     if [ -f "$PLOT_TRACKER" ]; then
         TEMP_FILE=$(mktemp)
         jq --arg date "$(date -Iseconds)" '.lastUpdated = $date' "$PLOT_TRACKER" > "$TEMP_FILE"
@@ -370,5 +370,5 @@ main() {
     fi
 }
 
-# 执行主函数
+# 메인 함수 실행
 main

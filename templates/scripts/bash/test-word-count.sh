@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 测试中文字数统计功能
-# 用于验证 count_chinese_words 函数的准确性
+# 한국어/중국어 글자 수 카운트 기능 테스트
+# count_chinese_words 함수의 정확성 검증용
 
 set -e
 
@@ -9,40 +9,40 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# 颜色输出
+# 색상 출력
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo "========================================"
-echo "中文字数统计功能测试"
+echo "글자 수 카운트 기능 테스트"
 echo "========================================"
 echo ""
 
-# 创建临时测试文件
+# 임시 테스트 파일 생성
 TEST_DIR=$(mktemp -d)
 trap "rm -rf $TEST_DIR" EXIT
 
-# 测试用例1: 纯中文文本
-echo "## 测试1: 纯中文文本"
+# 테스트 케이스 1: 순수 중국어 텍스트
+echo "## 테스트 1: 순수 중국어 텍스트"
 cat > "$TEST_DIR/test1.md" << 'EOF'
 今天天气很好，我去公园散步。
 看到很多人在锻炼身体。
 EOF
 expected1=16
 actual1=$(count_chinese_words "$TEST_DIR/test1.md")
-echo "  预期字数: $expected1"
-echo "  实际字数: $actual1"
+echo "  예상 글자 수: $expected1"
+echo "  실제 글자 수: $actual1"
 if [ "$actual1" -eq "$expected1" ]; then
-    echo -e "  ${GREEN}✅ 测试通过${NC}"
+    echo -e "  ${GREEN}✅ 테스트 통과${NC}"
 else
-    echo -e "  ${RED}❌ 测试失败${NC}"
+    echo -e "  ${RED}❌ 테스트 실패${NC}"
 fi
 echo ""
 
-# 测试用例2: 包含Markdown标记
-echo "## 测试2: 包含Markdown标记的文本"
+# 테스트 케이스 2: Markdown 태그 포함
+echo "## 테스트 2: Markdown 태그가 포함된 텍스트"
 cat > "$TEST_DIR/test2.md" << 'EOF'
 # 第一章
 
@@ -53,38 +53,38 @@ cat > "$TEST_DIR/test2.md" << 'EOF'
 
 > 这是引用
 EOF
-# 实际内容: 第一章这是重要的内容列表项1列表项2这是引用
+# 실제 내용: 第一章这是重要的内容列表项1列表项2这是引用
 expected2=21
 actual2=$(count_chinese_words "$TEST_DIR/test2.md")
-echo "  预期字数: $expected2"
-echo "  实际字数: $actual2"
+echo "  예상 글자 수: $expected2"
+echo "  실제 글자 수: $actual2"
 if [ "$actual2" -eq "$expected2" ]; then
-    echo -e "  ${GREEN}✅ 测试通过${NC}"
+    echo -e "  ${GREEN}✅ 테스트 통과${NC}"
 else
-    echo -e "  ${YELLOW}⚠️ 字数差异: $((actual2 - expected2))${NC}"
+    echo -e "  ${YELLOW}⚠️ 글자 수 차이: $((actual2 - expected2))${NC}"
 fi
 echo ""
 
-# 测试用例3: 中英混合
-echo "## 测试3: 中英文混合文本"
+# 테스트 케이스 3: 중영 혼합
+echo "## 테스트 3: 중영 혼합 텍스트"
 cat > "$TEST_DIR/test3.md" << 'EOF'
 这是一个测试test文件。
 包含123数字和English单词。
 EOF
-# 实际内容（移除空格和标点后）: 这是一个测试test文件包含123数字和English单词
+# 실제 내용 (공백 및 구두점 제거 후): 这是一个测试test文件包含123数字和English单词
 expected3=27
 actual3=$(count_chinese_words "$TEST_DIR/test3.md")
-echo "  预期字数: 约$expected3"
-echo "  实际字数: $actual3"
+echo "  예상 글자 수: 약$expected3"
+echo "  실제 글자 수: $actual3"
 if [ "$actual3" -ge 20 ] && [ "$actual3" -le 35 ]; then
-    echo -e "  ${GREEN}✅ 测试通过（在合理范围内）${NC}"
+    echo -e "  ${GREEN}✅ 테스트 통과 (합리적 범위 내)${NC}"
 else
-    echo -e "  ${YELLOW}⚠️ 字数差异较大${NC}"
+    echo -e "  ${YELLOW}⚠️ 글자 수 차이가 큼${NC}"
 fi
 echo ""
 
-# 测试用例4: 包含代码块
-echo "## 测试4: 包含代码块的文本"
+# 테스트 케이스 4: 코드 블록 포함
+echo "## 테스트 4: 코드 블록이 포함된 텍스트"
 cat > "$TEST_DIR/test4.md" << 'EOF'
 这是正常文本。
 
@@ -96,17 +96,17 @@ console.log("这是代码不应该被计数");
 EOF
 expected4=12
 actual4=$(count_chinese_words "$TEST_DIR/test4.md")
-echo "  预期字数: $expected4"
-echo "  实际字数: $actual4"
+echo "  예상 글자 수: $expected4"
+echo "  실제 글자 수: $actual4"
 if [ "$actual4" -eq "$expected4" ]; then
-    echo -e "  ${GREEN}✅ 测试通过${NC}"
+    echo -e "  ${GREEN}✅ 테스트 통과${NC}"
 else
-    echo -e "  ${YELLOW}⚠️ 字数差异: $((actual4 - expected4))${NC}"
+    echo -e "  ${YELLOW}⚠️ 글자 수 차이: $((actual4 - expected4))${NC}"
 fi
 echo ""
 
-# 对比测试: wc -w vs 新方法
-echo "## 对比测试: wc -w vs count_chinese_words"
+# 대조 테스트: wc -w vs 새로운 방법
+echo "## 대조 테스트: wc -w vs count_chinese_words"
 cat > "$TEST_DIR/compare.md" << 'EOF'
 这是一个包含大约五十个字的测试文本。
 我们需要验证字数统计的准确性。
@@ -116,13 +116,13 @@ cat > "$TEST_DIR/compare.md" << 'EOF'
 EOF
 wc_result=$(wc -w < "$TEST_DIR/compare.md" | tr -d ' ')
 new_result=$(count_chinese_words "$TEST_DIR/compare.md")
-echo "  wc -w 结果: $wc_result （不准确）"
-echo "  新方法结果: $new_result （准确）"
-echo -e "  ${YELLOW}注意：wc -w 对中文统计极不准确！${NC}"
+echo "  wc -w 결과: $wc_result (부정확)"
+echo "  새 방법 결과: $new_result (정확)"
+echo -e "  ${YELLOW}참고: wc -w 는 중국어/한국어 글자 수 카운트에 매우 부정확합니다!${NC}"
 echo ""
 
-# 性能测试
-echo "## 性能测试: 大文件处理"
+# 성능 테스트
+echo "## 성능 테스트: 대용량 파일 처리"
 cat > "$TEST_DIR/large.md" << 'EOF'
 # 第一章：开始
 
@@ -153,30 +153,30 @@ EOF
 start_time=$(date +%s%N)
 large_count=$(count_chinese_words "$TEST_DIR/large.md")
 end_time=$(date +%s%N)
-elapsed=$((($end_time - $start_time) / 1000000)) # 转换为毫秒
+elapsed=$((($end_time - $start_time) / 1000000)) # 밀리초로 변환
 
-echo "  文件字数: $large_count"
-echo "  处理时间: ${elapsed}ms"
+echo "  파일 글자 수: $large_count"
+echo "  처리 시간: ${elapsed}ms"
 if [ "$elapsed" -lt 1000 ]; then
-    echo -e "  ${GREEN}✅ 性能良好${NC}"
+    echo -e "  ${GREEN}✅ 성능 양호${NC}"
 else
-    echo -e "  ${YELLOW}⚠️ 处理时间较长${NC}"
+    echo -e "  ${YELLOW}⚠️ 처리 시간이 깁니다${NC}"
 fi
 echo ""
 
-# 总结
+# 요약
 echo "========================================"
-echo "测试完成！"
+echo "테스트 완료!"
 echo "========================================"
 echo ""
-echo -e "${GREEN}核心功能：${NC}"
-echo "  ✓ 准确统计中文字符"
-echo "  ✓ 排除Markdown标记"
-echo "  ✓ 排除代码块"
-echo "  ✓ 处理混合文本"
+echo -e "${GREEN}핵심 기능:${NC}"
+echo "  ✓ 중국어/한국어 문자 정확 카운트"
+echo "  ✓ Markdown 태그 제외"
+echo "  ✓ 코드 블록 제외"
+echo "  ✓ 혼합 텍스트 처리"
 echo ""
-echo -e "${YELLOW}使用建议：${NC}"
-echo "  • 不要使用 'wc -w' 统计中文字数"
-echo "  • 使用 'count_chinese_words' 函数获得准确结果"
-echo "  • 在写作完成后验证字数是否达标"
+echo -e "${YELLOW}사용 권장 사항:${NC}"
+echo "  • 'wc -w' 를 중국어/한국어 글자 수 카운트에 사용하지 마세요"
+echo "  • 'count_chinese_words' 함수를 사용하면 정확한 결과를 얻을 수 있습니다"
+echo "  • 집필 완료 후 글자 수가 기준에 도달했는지 검증하세요"
 echo ""
