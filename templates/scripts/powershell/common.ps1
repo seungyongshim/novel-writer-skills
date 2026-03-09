@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# 公用函数（PowerShell）
+# 공용 함수 (PowerShell)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -13,7 +13,7 @@ function Get-ProjectRoot {
     if (-not $parent -or $parent -eq $current) { break }
     $current = $parent
   }
-  throw "未找到项目根目录（缺少 .specify/config.json）"
+  throw "프로젝트 루트 디렉토리를 찾을 수 없음 (.specify/config.json 누락)"
 }
 
 function Get-CurrentStoryDir {
@@ -30,7 +30,6 @@ function Get-ActiveStory {
   if ($storyDir) {
     return Split-Path $storyDir -Leaf
   }
-  # 如果没有故事，返回默认名称
+  # 스토리가 없으면 기본 이름 반환
   return "story-$(Get-Date -Format 'yyyyMMdd')"
 }
-

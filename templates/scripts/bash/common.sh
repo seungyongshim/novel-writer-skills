@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# 通用函数库
+# 공용 함수 라이브러리
 
-# 获取项目根目录
+# 프로젝트 루트 디렉토리 가져오기
 get_project_root() {
     if [ -f ".specify/config.json" ]; then
         pwd
     else
-        # 向上查找包含 .specify 的目录
+        # 상위로 올라가며 .specify 폴더를 찾기
         current=$(pwd)
         while [ "$current" != "/" ]; do
             if [ -f "$current/.specify/config.json" ]; then
@@ -15,17 +15,17 @@ get_project_root() {
             fi
             current=$(dirname "$current")
         done
-        echo "错误: 未找到小说项目根目录" >&2
+        echo "오류: 소설 프로젝트 루트 디렉토리를 찾을 수 없음" >&2
         exit 1
     fi
 }
 
-# 获取当前故事目录
+# 현재 스토리 디렉토리 가져오기
 get_current_story() {
     PROJECT_ROOT=$(get_project_root)
     STORIES_DIR="$PROJECT_ROOT/stories"
 
-    # 找到最新的故事目录
+    # 최신 스토리 디렉토리 찾기
     if [ -d "$STORIES_DIR" ]; then
         latest=$(ls -t "$STORIES_DIR" 2>/dev/null | head -1)
         if [ -n "$latest" ]; then
@@ -34,25 +34,25 @@ get_current_story() {
     fi
 }
 
-# 获取活跃故事名称（只返回名称，不返回路径）
+# 활성 스토리 이름 가져오기 (이름만 반환, 경로 아님)
 get_active_story() {
     story_dir=$(get_current_story)
     if [ -n "$story_dir" ]; then
         basename "$story_dir"
     else
-        # 如果没有故事，返回默认名称
+        # 스토리가 없으면 기본 이름 반환
         echo "story-$(date +%Y%m%d)"
     fi
 }
 
-# 创建带编号的目录
+# 번호가 붙은 디렉토리 생성
 create_numbered_dir() {
     base_dir="$1"
     prefix="$2"
 
     mkdir -p "$base_dir"
 
-    # 找到最高编号
+    # 최고 번호 찾기
     highest=0
     for dir in "$base_dir"/*; do
         [ -d "$dir" ] || continue
@@ -64,17 +64,17 @@ create_numbered_dir() {
         fi
     done
 
-    # 返回下一个编号
+    # 다음 번호 반환
     next=$((highest + 1))
     printf "%03d" "$next"
 }
 
-# 输出 JSON（用于与 AI 助手通信）
+# JSON 출력 (AI 어시스턴트와 통신용)
 output_json() {
     echo "$1"
 }
 
-# 确保文件存在
+# 파일 존재 확인
 ensure_file() {
     file="$1"
     template="$2"
@@ -88,8 +88,8 @@ ensure_file() {
     fi
 }
 
-# 准确的中文字数统计
-# 排除Markdown标记、空格、换行符，只统计实际内容
+# 정확한 글자 수 통계
+# Markdown 마크업, 공백, 줄바꿈을 제외하고 실제 내용만 카운트
 count_chinese_words() {
     local file="$1"
 
@@ -98,15 +98,15 @@ count_chinese_words() {
         return
     fi
 
-    # 移除Markdown标记和格式符号，然后统计字符
-    # 1. 移除代码块
-    # 2. 移除标题标记 (#)
-    # 3. 移除强调标记 (* 和 _)
-    # 4. 移除链接标记 ([ ] ( ))
-    # 5. 移除引用标记 (>)
-    # 6. 移除列表标记 (- *)
-    # 7. 移除空格、换行、制表符
-    # 8. 统计剩余字符数
+    # Markdown 마크업과 서식 기호 제거 후 문자 카운트
+    # 1. 코드 블록 제거
+    # 2. 제목 마크업 (#) 제거
+    # 3. 강조 마크업 (* 및 _) 제거
+    # 4. 링크 마크업 ([ ] ( )) 제거
+    # 5. 인용 마크업 (>) 제거
+    # 6. 목록 마크업 (- *) 제거
+    # 7. 공백, 줄바꿈, 탭 제거
+    # 8. 남은 문자 수 카운트
     local word_count=$(cat "$file" | \
         sed '/^```/,/^```/d' | \
         sed 's/^#\+[[:space:]]*//' | \
@@ -129,23 +129,23 @@ count_chinese_words() {
     echo "$word_count"
 }
 
-# 显示友好的字数信息
-# 参数: 文件路径, 最小字数(可选), 最大字数(可选)
+# 글자 수 정보 표시
+# 매개변수: 파일 경로, 최소 글자 수(선택), 최대 글자 수(선택)
 show_word_count_info() {
     local file="$1"
     local min_words="${2:-0}"
     local max_words="${3:-999999}"
     local actual_words=$(count_chinese_words "$file")
 
-    echo "字数：$actual_words"
+    echo "글자 수: $actual_words"
 
     if [ "$min_words" -gt 0 ]; then
         if [ "$actual_words" -lt "$min_words" ]; then
-            echo "⚠️ 未达到最低字数要求（最小：${min_words}）"
+            echo "⚠️ 최소 글자 수 미달 (최소: ${min_words})"
         elif [ "$actual_words" -gt "$max_words" ]; then
-            echo "⚠️ 超过最大字数限制（最大：${max_words}）"
+            echo "⚠️ 최대 글자 수 초과 (최대: ${max_words})"
         else
-            echo "✅ 符合字数要求（${min_words}-${max_words}）"
+            echo "✅ 글자 수 요건 충족 (${min_words}-${max_words})"
         fi
     fi
 }

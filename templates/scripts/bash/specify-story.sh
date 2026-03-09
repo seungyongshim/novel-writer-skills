@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 故事规格定义脚本
-# 用于 /specify 命令
+# 스토리 규격 정의 스크립트
+# /specify 명령용
 
 set -e
 
@@ -29,9 +29,9 @@ done
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 确定故事名称和路径
+# 스토리 이름과 경로 결정
 if [ -z "$STORY_NAME" ]; then
-    # 查找最新的故事
+    # 최신 스토리 찾기
     STORIES_DIR="stories"
     if [ -d "$STORIES_DIR" ] && [ "$(ls -A $STORIES_DIR 2>/dev/null)" ]; then
         STORY_DIR=$(find "$STORIES_DIR" -maxdepth 1 -type d ! -name "stories" | sort -r | head -n 1)
@@ -40,20 +40,20 @@ if [ -z "$STORY_NAME" ]; then
         fi
     fi
 
-    # 如果还是没有，生成默认名称
+    # 여전히 없으면 기본 이름 생성
     if [ -z "$STORY_NAME" ]; then
         STORY_NAME="story-$(date +%Y%m%d)"
     fi
 fi
 
-# 设置路径
+# 경로 설정
 STORY_DIR="stories/$STORY_NAME"
 SPEC_FILE="$STORY_DIR/specification.md"
 
-# 创建目录
+# 디렉토리 생성
 mkdir -p "$STORY_DIR"
 
-# 检查文件状态
+# 파일 상태 확인
 SPEC_EXISTS=false
 STATUS="new"
 
@@ -62,7 +62,7 @@ if [ -f "$SPEC_FILE" ]; then
     STATUS="exists"
 fi
 
-# 输出 JSON 格式
+# JSON 형식으로 출력
 if [ "$JSON_MODE" = true ]; then
     cat <<EOF
 {
@@ -74,20 +74,20 @@ if [ "$JSON_MODE" = true ]; then
 }
 EOF
 else
-    echo "故事规格初始化"
+    echo "스토리 규격 초기화"
     echo "================"
-    echo "故事名称：$STORY_NAME"
-    echo "规格路径：$SPEC_FILE"
+    echo "스토리 이름: $STORY_NAME"
+    echo "규격 경로: $SPEC_FILE"
 
     if [ "$SPEC_EXISTS" = true ]; then
-        echo "状态：规格文件已存在，准备更新"
+        echo "상태: 규격 파일이 이미 존재, 업데이트 준비"
     else
-        echo "状态：准备创建新规格"
+        echo "상태: 새 규격 생성 준비"
     fi
 
-    # 检查宪法
+    # 헌법 확인
     if [ -f ".specify/memory/constitution.md" ]; then
         echo ""
-        echo "✅ 检测到创作宪法，规格将遵循宪法原则"
+        echo "✅ 창작 헌법 감지됨, 규격이 헌법 원칙을 따름"
     fi
 fi

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 澄清故事大纲的支撑脚本
-# 用于 /clarify 命令，扫描并返回当前故事路径
+# 스토리 개요 명확화 지원 스크립트
+# /clarify 명령용, 현재 스토리 경로를 스캔하여 반환
 
 set -e
 
@@ -39,7 +39,7 @@ if [ ! -d "$STORIES_DIR" ]; then
     if [ "$JSON_MODE" = true ]; then
         echo '{"error": "No stories directory found"}'
     else
-        echo "错误：未找到 stories 目录，请先运行 /story 创建故事大纲"
+        echo "오류: stories 디렉토리를 찾을 수 없음, 먼저 /story를 실행하여 스토리 개요를 생성하세요"
     fi
     exit 1
 fi
@@ -51,7 +51,7 @@ if [ -z "$STORY_DIR" ]; then
     if [ "$JSON_MODE" = true ]; then
         echo '{"error": "No story found"}'
     else
-        echo "错误：未找到故事，请先运行 /story 创建故事大纲"
+        echo "오류: 스토리를 찾을 수 없음, 먼저 /story를 실행하여 스토리 개요를 생성하세요"
     fi
     exit 1
 fi
@@ -59,27 +59,27 @@ fi
 # Extract story name from directory
 STORY_NAME=$(basename "$STORY_DIR")
 
-# Find story file (新格式 specification.md)
+# Find story file (새 형식 specification.md)
 STORY_FILE="$STORY_DIR/specification.md"
 if [ ! -f "$STORY_FILE" ]; then
     if [ "$JSON_MODE" = true ]; then
         echo '{"error": "Story file not found (specification.md required)"}'
     else
-        echo "错误：未找到故事文件 specification.md"
+        echo "오류: 스토리 파일 specification.md를 찾을 수 없음"
     fi
     exit 1
 fi
 
 # Check if clarification already exists
 CLARIFICATION_EXISTS=false
-if grep -q "## 澄清记录" "$STORY_FILE" 2>/dev/null; then
+if grep -q "## 명확화 기록" "$STORY_FILE" 2>/dev/null; then
     CLARIFICATION_EXISTS=true
 fi
 
 # Count existing clarification sessions
 CLARIFICATION_COUNT=0
 if [ "$CLARIFICATION_EXISTS" = true ]; then
-    CLARIFICATION_COUNT=$(grep -c "### 澄清会话" "$STORY_FILE" 2>/dev/null || echo "0")
+    CLARIFICATION_COUNT=$(grep -c "### 명확화 세션" "$STORY_FILE" 2>/dev/null || echo "0")
 fi
 
 # Output in JSON format if requested
@@ -107,11 +107,11 @@ EOF
 EOF
     fi
 else
-    echo "找到故事：$STORY_NAME"
-    echo "文件路径：$STORY_FILE"
+    echo "스토리 발견: $STORY_NAME"
+    echo "파일 경로: $STORY_FILE"
     if [ "$CLARIFICATION_EXISTS" = true ]; then
-        echo "已有澄清会话：$CLARIFICATION_COUNT 次"
+        echo "기존 명확화 세션: ${CLARIFICATION_COUNT}회"
     else
-        echo "尚未进行过澄清"
+        echo "아직 명확화를 진행하지 않음"
     fi
 fi
