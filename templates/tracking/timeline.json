@@ -1,49 +1,49 @@
 {
-  "novel": "[小说名称]",
+  "novel": "[소설 제목]",
   "lastUpdated": "",
 
   "storyTime": {
-    "start": "[故事开始时间]",
-    "current": "[当前故事时间]",
-    "end": "[预计结束时间]",
-    "format": "说明：可以是年代、季节、具体日期等"
+    "start": "[이야기 시작 시간]",
+    "current": "[현재 이야기 시간]",
+    "end": "[예상 종료 시간]",
+    "format": "설명: 연대, 계절, 구체적 날짜 등 사용 가능"
   },
 
   "events": [
     {
       "chapter": 1,
-      "date": "[故事内时间]",
-      "event": "[事件描述]",
-      "duration": "[持续时间]",
+      "date": "[이야기 내 시간]",
+      "event": "[이벤트 설명]",
+      "duration": "[지속 시간]",
       "participants": []
     }
   ],
 
   "parallelEvents": {
-    "说明": "同时发生的事件，按时间点分组",
+    "설명": "동시에 발생하는 이벤트, 시간대별 그룹화",
     "timepoints": {}
   },
 
   "historicalContext": {
-    "说明": "历史背景事件（历史小说适用）",
+    "설명": "역사적 배경 이벤트 (역사 소설에 적용)",
     "events": []
   },
 
   "timeLogic": {
     "travelTimes": {
-      "说明": "地点间的旅行时间",
+      "설명": "장소 간 이동 시간",
       "routes": {}
     },
     "constraints": [
       {
-        "description": "时间限制说明",
+        "description": "시간 제한 설명",
         "rule": ""
       }
     ]
   },
 
   "anomalies": {
-    "说明": "时间逻辑问题记录",
+    "설명": "시간 논리 문제 기록",
     "issues": []
   }
 }

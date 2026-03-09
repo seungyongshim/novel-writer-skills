@@ -1,36 +1,36 @@
 {
-  "novel": "[小说名称]",
+  "novel": "[소설 제목]",
   "lastUpdated": "",
 
   "protagonist": {
-    "name": "[主角名]",
+    "name": "[주인공 이름]",
     "currentStatus": {
       "alive": true,
-      "health": "良好",
-      "mentalState": "正常",
-      "location": "[当前位置]",
+      "health": "양호",
+      "mentalState": "정상",
+      "location": "[현재 위치]",
       "chapter": 1,
       "age": null,
-      "position": "[身份/职位]",
+      "position": "[신분/직위]",
       "possessions": [],
       "skills": [],
       "knowledge": []
     },
     "development": {
-      "arc": "[成长弧线描述]",
+      "arc": "[성장 아크 설명]",
       "milestones": [],
-      "currentPhase": "起点",
+      "currentPhase": "출발점",
       "nextGoal": ""
     },
     "relationships": {
-      "summary": "见relationships.json详细信息",
+      "summary": "relationships.json 상세 정보 참조",
       "key": {}
     }
   },
 
   "supportingCharacters": {
-    "[配角名]": {
-      "role": "[角色功能]",
+    "[조연 이름]": {
+      "role": "[캐릭터 기능]",
       "importance": "high|medium|low",
       "status": {
         "alive": true,
@@ -61,8 +61,8 @@
       "chapter": 1,
       "appearances": [
         {
-          "character": "[角色名]",
-          "role": "主要|次要|背景",
+          "character": "[캐릭터 이름]",
+          "role": "주요|보조|배경",
           "significance": ""
         }
       ]
