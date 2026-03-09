@@ -1,541 +1,541 @@
 ---
 name: pre-write-checklist
-description: "Activates automatically before chapter writing to enforce the 9-item mandatory file reading checklist - prevents AI focus degradation in long-form fiction by ensuring all context is loaded before each writing session"
+description: "챕터 집필 전 자동 활성화되어 9항목 필수 파일 읽기 체크리스트를 강제 적용 - 장편 소설에서 AI 집중력 저하를 방지하기 위해 매 집필 세션 전 모든 컨텍스트를 로드합니다"
 allowed-tools: Read, Grep
 ---
 
-# 写作前强制检查清单
+# 집필 전 강제 체크리스트
 
-## 核心功能
+## 핵심 기능
 
-**解决AI长篇失焦问题** - 这是Novel Writer Skills v1.0的核心创新。
+**AI 장편 집중력 저하 문제 해결** - Novel Writer Skills v1.0의 핵심 혁신입니다.
 
-### 问题根源
+### 문제 근원
 
-用户反馈：使用novel-writer创作，前30章质量很好，但30章后AI开始：
-- 忘记前文设定
-- 角色性格不一致
-- 情节重复或矛盾
-- 忽略创作宪法的原则
+사용자 피드백: novel-writer로 창작 시, 처음 30장은 품질이 좋지만 30장 이후 AI가:
+- 앞부분 설정을 잊어버림
+- 캐릭터 성격이 일관되지 않음
+- 플롯이 반복되거나 모순됨
+- 창작 헌법의 원칙을 무시
 
-**根本原因**：长对话导致AI遗忘早期context，即使specification.md写得再详细也会被忘记。
+**근본 원인**: 긴 대화로 AI가 초기 context를 잊어버림, specification.md를 아무리 상세히 써도 잊혀짐.
 
-### 解决方案
+### 해결 방안
 
-**每次写作前强制重读所有关键文件** → AI重新加载完整context → 保持一致性
+**매 집필 전 모든 핵심 파일을 강제 재읽기** → AI가 완전한 context를 재로드 → 일관성 유지
 
 ---
 
-## 9项强制检查清单
+## 9항목 강제 체크리스트
 
-每次执行`/write`命令时，必须先完成此检查清单：
+매번 `/write` 명령 실행 시, 먼저 이 체크리스트를 완료해야:
 
 ```markdown
-📋 写作前检查清单（必须完成）：
+📋 집필 전 체크리스트 (필수 완료):
 
-✓ 1. memory/constitution.md - 创作宪法
-✓ 2. memory/style-reference.md - 风格参考（如有）
-✓ 3. stories/*/specification.md - 故事规格
-✓ 4. stories/*/creative-plan.md - 创作计划
-✓ 5. stories/*/tasks.md - 当前任务
-✓ 6. spec/tracking/character-state.json - 角色状态
-✓ 7. spec/tracking/relationships.json - 关系网络
-✓ 8. spec/tracking/plot-tracker.json - 情节追踪（如有）
-✓ 9. spec/tracking/validation-rules.json - 验证规则（如有）
+✓ 1. memory/constitution.md - 창작 헌법
+✓ 2. memory/style-reference.md - 스타일 참조 (있는 경우)
+✓ 3. stories/*/specification.md - 스토리 규격
+✓ 4. stories/*/creative-plan.md - 창작 계획
+✓ 5. stories/*/tasks.md - 현재 작업
+✓ 6. spec/tracking/character-state.json - 캐릭터 상태
+✓ 7. spec/tracking/relationships.json - 관계 네트워크
+✓ 8. spec/tracking/plot-tracker.json - 플롯 추적 (있는 경우)
+✓ 9. spec/tracking/validation-rules.json - 검증 규칙 (있는 경우)
 
-📊 上下文加载状态：✅ 完成
-```
-
----
-
-## 工作原理
-
-### 自动触发时机
-
-1. **用户执行 `/write` 命令**
-2. **本Skill自动激活**
-3. **强制执行检查清单**
-4. **输出确认报告**
-5. **然后才开始写作**
-
-### 执行流程
-
-```
-用户: /write 第10章
-
-         ↓
-
-[pre-write-checklist 自动激活]
-
-         ↓
-
-步骤1：读取 memory/constitution.md
-步骤2：读取 memory/style-reference.md（如有）
-步骤3：读取 stories/*/specification.md
-步骤4：读取 stories/*/creative-plan.md
-步骤5：读取 stories/*/tasks.md
-步骤6：读取 spec/tracking/character-state.json
-步骤7：读取 spec/tracking/relationships.json
-步骤8：读取 spec/tracking/plot-tracker.json（如有）
-步骤9：读取 spec/tracking/validation-rules.json（如有）
-
-         ↓
-
-输出确认：
-📋 写作前检查清单（已完成）：
-✓ 1-9 所有文件已读取
-📊 上下文加载状态：✅ 完成
-
-关键信息摘要：
-- 创作原则：[从constitution提取]
-- 当前任务：[从tasks.md提取]
-- 主要角色：[从character-state提取]
-- 情节进度：[从plot-tracker提取]
-
-         ↓
-
-开始写作第10章...
+📊 컨텍스트 로드 상태: ✅ 완료
 ```
 
 ---
 
-## 输出格式
+## 작동 원리
 
-### 标准输出（所有文件存在）
+### 자동 트리거 시점
 
-```markdown
-📋 写作前检查清单（已完成）：
+1. **사용자가 `/write` 명령 실행**
+2. **본 Skill 자동 활성화**
+3. **체크리스트 강제 실행**
+4. **확인 보고서 출력**
+5. **그 후에야 집필 시작**
 
-✓ 1. memory/constitution.md - 创作宪法
-   → 核心原则：[列出2-3条关键原则]
+### 실행 흐름
 
-✓ 2. memory/style-reference.md - 风格参考
-   → 风格要点：[提取关键风格要求]
-
-✓ 3. stories/xxx/specification.md - 故事规格
-   → 故事类型：[言情/悬疑/历史等]
-   → P0元素：[必须包含的元素]
-
-✓ 4. stories/xxx/creative-plan.md - 创作计划
-   → 当前阶段：[第X卷/第X章]
-   → 本章目标：[情节/情感目标]
-
-✓ 5. stories/xxx/tasks.md - 当前任务
-   → 待写章节：[第X章]
-   → 任务状态：[pending/in_progress]
-
-✓ 6. spec/tracking/character-state.json - 角色状态
-   → 主要角色：[列出角色名和当前状态]
-
-✓ 7. spec/tracking/relationships.json - 关系网络
-   → 核心关系：[主角与谁的关系变化]
-
-✓ 8. spec/tracking/plot-tracker.json - 情节追踪
-   → 活跃线索：[当前进行中的情节线]
-
-✓ 9. spec/tracking/validation-rules.json - 验证规则
-   → 自动修复：[启用/禁用]
-
-📊 上下文加载状态：✅ 完成（加载9个文件，约XXXX tokens）
-
-🎯 准备写作第X章...
 ```
+사용자: /write 10장
 
-### 部分文件缺失时
+         ↓
 
-```markdown
-📋 写作前检查清单（部分完成）：
+[pre-write-checklist 자동 활성화]
 
-✓ 1. memory/constitution.md - 创作宪法
-✓ 2. ⚠️ memory/style-reference.md - 不存在（可选文件，跳过）
-✓ 3. stories/xxx/specification.md - 故事规格
-✓ 4. stories/xxx/creative-plan.md - 创作计划
-✓ 5. stories/xxx/tasks.md - 当前任务
-✓ 6. spec/tracking/character-state.json - 角色状态
-✓ 7. spec/tracking/relationships.json - 关系网络
-✓ 8. ⚠️ spec/tracking/plot-tracker.json - 不存在（可选文件，跳过）
-✓ 9. ⚠️ spec/tracking/validation-rules.json - 不存在（可选文件，跳过）
+         ↓
 
-📊 上下文加载状态：✅ 完成（加载6个必须文件 + 0个可选文件）
+1단계: memory/constitution.md 읽기
+2단계: memory/style-reference.md 읽기 (있는 경우)
+3단계: stories/*/specification.md 읽기
+4단계: stories/*/creative-plan.md 읽기
+5단계: stories/*/tasks.md 읽기
+6단계: spec/tracking/character-state.json 읽기
+7단계: spec/tracking/relationships.json 읽기
+8단계: spec/tracking/plot-tracker.json 읽기 (있는 경우)
+9단계: spec/tracking/validation-rules.json 읽기 (있는 경우)
 
-💡 建议：运行 `/track-init` 初始化完整追踪系统
-```
+         ↓
 
-### 关键文件缺失时（阻止写作）
+확인 출력:
+📋 집필 전 체크리스트 (완료):
+✓ 1-9 모든 파일 읽기 완료
+📊 컨텍스트 로드 상태: ✅ 완료
 
-```markdown
-📋 写作前检查清单（失败）：
+핵심 정보 요약:
+- 창작 원칙: [constitution에서 추출]
+- 현재 작업: [tasks.md에서 추출]
+- 주요 캐릭터: [character-state에서 추출]
+- 플롯 진행: [plot-tracker에서 추출]
 
-✓ 1. memory/constitution.md - 创作宪法
-✓ 2. memory/style-reference.md - 风格参考
-❌ 3. stories/xxx/specification.md - **文件不存在**
-❌ 4. stories/xxx/creative-plan.md - **文件不存在**
-❌ 5. stories/xxx/tasks.md - **文件不存在**
+         ↓
 
-⛔ 错误：缺少必需文件，无法继续写作
-
-必须先完成：
-1. 运行 `/constitution` 创建创作宪法
-2. 运行 `/specify` 定义故事规格
-3. 运行 `/plan` 制定创作计划
-4. 运行 `/tasks` 分解任务清单
-
-然后才能执行 `/write`
-
-这是seven-step methodology的推荐流程。
+10장 집필 시작...
 ```
 
 ---
 
-## 与Commands集成
+## 출력 형식
 
-### `/write` 命令
+### 표준 출력 (모든 파일 존재)
 
-**必须先执行检查清单，才能写作**：
+```markdown
+📋 집필 전 체크리스트 (완료):
+
+✓ 1. memory/constitution.md - 창작 헌법
+   → 핵심 원칙: [2-3개 핵심 원칙 나열]
+
+✓ 2. memory/style-reference.md - 스타일 참조
+   → 스타일 요점: [핵심 스타일 요구 추출]
+
+✓ 3. stories/xxx/specification.md - 스토리 규격
+   → 이야기 장르: [로맨스/미스터리/역사 등]
+   → P0 요소: [반드시 포함할 요소]
+
+✓ 4. stories/xxx/creative-plan.md - 창작 계획
+   → 현재 단계: [제X권/제X장]
+   → 본 장 목표: [플롯/감정 목표]
+
+✓ 5. stories/xxx/tasks.md - 현재 작업
+   → 집필 대기 장: [제X장]
+   → 작업 상태: [pending/in_progress]
+
+✓ 6. spec/tracking/character-state.json - 캐릭터 상태
+   → 주요 캐릭터: [캐릭터명과 현재 상태 나열]
+
+✓ 7. spec/tracking/relationships.json - 관계 네트워크
+   → 핵심 관계: [주인공과 누구의 관계 변화]
+
+✓ 8. spec/tracking/plot-tracker.json - 플롯 추적
+   → 활성 실마리: [현재 진행 중인 플롯 라인]
+
+✓ 9. spec/tracking/validation-rules.json - 검증 규칙
+   → 자동 수정: [활성/비활성]
+
+📊 컨텍스트 로드 상태: ✅ 완료 (9개 파일 로드, 약 XXXX tokens)
+
+🎯 제X장 집필 준비...
+```
+
+### 일부 파일 누락 시
+
+```markdown
+📋 집필 전 체크리스트 (부분 완료):
+
+✓ 1. memory/constitution.md - 창작 헌법
+✓ 2. ⚠️ memory/style-reference.md - 존재하지 않음 (선택 파일, 건너뜀)
+✓ 3. stories/xxx/specification.md - 스토리 규격
+✓ 4. stories/xxx/creative-plan.md - 창작 계획
+✓ 5. stories/xxx/tasks.md - 현재 작업
+✓ 6. spec/tracking/character-state.json - 캐릭터 상태
+✓ 7. spec/tracking/relationships.json - 관계 네트워크
+✓ 8. ⚠️ spec/tracking/plot-tracker.json - 존재하지 않음 (선택 파일, 건너뜀)
+✓ 9. ⚠️ spec/tracking/validation-rules.json - 존재하지 않음 (선택 파일, 건너뜀)
+
+📊 컨텍스트 로드 상태: ✅ 완료 (필수 6개 파일 + 선택 0개 파일 로드)
+
+💡 제안: `/track-init`을 실행하여 전체 추적 시스템을 초기화하세요
+```
+
+### 핵심 파일 누락 시 (집필 차단)
+
+```markdown
+📋 집필 전 체크리스트 (실패):
+
+✓ 1. memory/constitution.md - 창작 헌법
+✓ 2. memory/style-reference.md - 스타일 참조
+❌ 3. stories/xxx/specification.md - **파일 없음**
+❌ 4. stories/xxx/creative-plan.md - **파일 없음**
+❌ 5. stories/xxx/tasks.md - **파일 없음**
+
+⛔ 오류: 필수 파일 누락, 집필을 계속할 수 없음
+
+먼저 완료해야:
+1. `/constitution` 실행하여 창작 헌법 생성
+2. `/specify` 실행하여 스토리 규격 정의
+3. `/plan` 실행하여 창작 계획 수립
+4. `/tasks` 실행하여 작업 체크리스트 분해
+
+그 후에야 `/write` 실행 가능
+
+이것이 7단계 방법론의 권장 프로세스입니다.
+```
+
+---
+
+## Commands와의 통합
+
+### `/write` 명령
+
+**반드시 체크리스트를 먼저 실행해야 집필 가능**:
 
 ```yaml
-执行顺序：
-1. pre-write-checklist（本Skill）→ 读取所有文件
-2. 输出确认报告
-3. 检查setting-detector → 是否需要激活知识库
-4. 开始实际写作
+실행 순서:
+1. pre-write-checklist (본 Skill) → 모든 파일 읽기
+2. 확인 보고서 출력
+3. setting-detector 검사 → 지식 베이스 활성화 필요 여부
+4. 실제 집필 시작
 ```
 
-### `/analyze` 命令
+### `/analyze` 명령
 
-分析时也建议执行检查清单：
+분석 시에도 체크리스트 실행 권장:
 
 ```yaml
-分析前先确保context完整：
-1. pre-write-checklist → 重新加载所有文件
-2. 基于最新状态执行分析
+분석 전 컨텍스트 완전성 확보:
+1. pre-write-checklist → 모든 파일 재로드
+2. 최신 상태 기반으로 분석 실행
 ```
 
-### `/track` 命令
+### `/track` 명령
 
-追踪更新后触发检查清单：
+추적 업데이트 후 체크리스트 트리거:
 
 ```yaml
-更新流程：
-1. 用户修改tracking文件
-2. 运行 `/track` 更新
-3. pre-write-checklist → 重新读取验证
+업데이트 흐름:
+1. 사용자가 tracking 파일 수정
+2. `/track` 실행하여 업데이트
+3. pre-write-checklist → 재읽기 검증
 ```
 
 ---
 
-## 文件重要性分类
+## 파일 중요도 분류
 
-### 必须文件（缺失则阻止写作）
-
-```
-1. memory/constitution.md - 创作原则
-3. stories/*/specification.md - 故事规格
-4. stories/*/creative-plan.md - 创作计划
-5. stories/*/tasks.md - 当前任务
-6. spec/tracking/character-state.json - 角色状态
-7. spec/tracking/relationships.json - 关系网络
-```
-
-**逻辑**：没有这些文件，AI不知道：
-- 要遵循什么原则
-- 故事是关于什么的
-- 当前写到哪里了
-- 角色是谁、什么状态
-
-### 可选文件（缺失时警告但允许继续）
+### 필수 파일 (누락 시 집필 차단)
 
 ```
-2. memory/style-reference.md - 风格参考
-8. spec/tracking/plot-tracker.json - 情节追踪
-9. spec/tracking/validation-rules.json - 验证规则
+1. memory/constitution.md - 창작 원칙
+3. stories/*/specification.md - 스토리 규격
+4. stories/*/creative-plan.md - 창작 계획
+5. stories/*/tasks.md - 현재 작업
+6. spec/tracking/character-state.json - 캐릭터 상태
+7. spec/tracking/relationships.json - 관계 네트워크
 ```
 
-**逻辑**：这些文件增强质量，但不是最低要求：
-- style-reference：某些用户不用/book-internalize
-- plot-tracker：简单故事可能不需要
-- validation-rules：非必需的自动化
+**논리**: 이 파일들이 없으면, AI가 알 수 없음:
+- 어떤 원칙을 따라야 하는지
+- 이야기가 무엇에 대한 것인지
+- 현재 어디까지 썼는지
+- 캐릭터가 누구이고 어떤 상태인지
+
+### 선택 파일 (누락 시 경고하되 계속 허용)
+
+```
+2. memory/style-reference.md - 스타일 참조
+8. spec/tracking/plot-tracker.json - 플롯 추적
+9. spec/tracking/validation-rules.json - 검증 규칙
+```
+
+**논리**: 이 파일들은 품질을 향상시키지만, 최소 요건은 아님:
+- style-reference: 일부 사용자는 /book-internalize를 사용하지 않음
+- plot-tracker: 간단한 이야기에는 불필요할 수 있음
+- validation-rules: 비필수 자동화
 
 ---
 
-## 防失焦机制
+## 집중력 저하 방지 메커니즘
 
-### 问题场景
-
-```
-第1章写作：
-- AI记得所有设定
-- 质量很好
-
-第10章写作：
-- 对话已经很长
-- AI开始遗忘第1章的设定
-
-第30章写作：
-- 完全忘记早期设定
-- 角色性格走样
-- 情节自相矛盾
-```
-
-### 解决机制
+### 문제 시나리오
 
 ```
-每次写作前：
-- 强制重读所有核心文件
-- 重新加载完整context
-- 像写第1章一样对待第30章
+1장 집필:
+- AI가 모든 설정을 기억
+- 품질 좋음
 
-结果：
-- 第30章质量 ≈ 第1章质量
-- 一致性保持
-- 不再失焦
+10장 집필:
+- 대화가 이미 매우 긺
+- AI가 1장의 설정을 잊기 시작
+
+30장 집필:
+- 초기 설정을 완전히 잊음
+- 캐릭터 성격 왜곡
+- 플롯이 자기 모순
 ```
 
-### 效果对比
+### 해결 메커니즘
 
-| 对比维度 | 无检查清单 | 有检查清单 |
-|---------|----------|----------|
-| 第1-10章 | ✓ 质量好 | ✓ 质量好 |
-| 第11-30章 | ⚠️ 开始不稳定 | ✓ 保持稳定 |
-| 第31-50章 | ❌ 明显失焦 | ✓ 依然稳定 |
-| 第51+章 | ❌ 严重失焦 | ✓ 长期稳定 |
+```
+매 집필 전:
+- 모든 핵심 파일 강제 재읽기
+- 완전한 컨텍스트 재로드
+- 30장을 1장처럼 대우
+
+결과:
+- 30장 품질 ≈ 1장 품질
+- 일관성 유지
+- 더 이상 집중력 저하 없음
+```
+
+### 효과 비교
+
+| 비교 차원 | 체크리스트 없음 | 체크리스트 있음 |
+|---------|-------------|-------------|
+| 1-10장 | ✓ 품질 좋음 | ✓ 품질 좋음 |
+| 11-30장 | ⚠️ 불안정 시작 | ✓ 안정 유지 |
+| 31-50장 | ❌ 뚜렷한 집중력 저하 | ✓ 여전히 안정 |
+| 51+장 | ❌ 심각한 집중력 저하 | ✓ 장기 안정 |
 
 ---
 
-## 配置选项
+## 설정 옵션
 
-### 调整严格度
+### 엄격도 조정
 
-**默认：严格模式**（推荐）
+**기본: 엄격 모드** (권장)
 ```
-"使用严格检查清单模式"
-→ 缺少必需文件则阻止写作
-```
-
-**宽松模式**（不推荐）
-```
-"使用宽松检查清单模式"
-→ 允许跳过部分文件（不推荐，可能失焦）
+"엄격 체크리스트 모드 사용"
+→ 필수 파일 누락 시 집필 차단
 ```
 
-### 自定义检查项
+**느슨한 모드** (비권장)
+```
+"느슨한 체크리스트 모드 사용"
+→ 일부 파일 건너뛰기 허용 (비권장, 집중력 저하 가능)
+```
 
-如果你有额外的重要文件：
+### 사용자 정의 체크 항목
+
+추가 중요 파일이 있는 경우:
 
 ```
-"检查清单请额外包含：
+"체크리스트에 다음을 추가로 포함해 주세요:
 - spec/knowledge/worldbuilding/magic-system.md
 - spec/knowledge/characters/protagonist-profile.md"
 ```
 
 ---
 
-## 性能优化
+## 성능 최적화
 
-### Token消耗
-
-```
-每次写作的额外token成本：
-
-9个文件读取：
-- constitution.md：~200 tokens
-- specification.md：~500 tokens
-- creative-plan.md：~300 tokens
-- tasks.md：~150 tokens
-- character-state.json：~200 tokens
-- relationships.json：~150 tokens
-- 其他：~200 tokens
-
-总计：约1700 tokens/次写作
-
-收益：
-- 避免失焦导致的重写（节省数万tokens）
-- 保持质量一致（用户满意度）
-- 长篇项目的可持续性
-```
-
-**ROI极高**：1700 tokens换来长期稳定质量。
-
-### 缓存策略
+### Token 소비
 
 ```
-同一写作会话中：
-第1次写作：读取所有文件（1700 tokens）
-第2次写作（1小时内）：检查文件是否修改
-- 未修改：使用缓存（0 tokens）
-- 已修改：重新读取（部分tokens）
+매 집필의 추가 token 비용:
+
+9개 파일 읽기:
+- constitution.md: ~200 tokens
+- specification.md: ~500 tokens
+- creative-plan.md: ~300 tokens
+- tasks.md: ~150 tokens
+- character-state.json: ~200 tokens
+- relationships.json: ~150 tokens
+- 기타: ~200 tokens
+
+총계: 약 1700 tokens/집필 당
+
+수익:
+- 집중력 저하로 인한 재작성 방지 (수만 tokens 절약)
+- 품질 일관성 유지 (사용자 만족도)
+- 장편 프로젝트의 지속 가능성
 ```
 
----
+**ROI 매우 높음**: 1700 tokens으로 장기 안정 품질 확보.
 
-## 常见问题
-
-### Q: 每次写作都要读这么多文件，会不会很慢？
-
-**A**: 不会。
-- 文件读取很快（毫秒级）
-- token消耗合理（~1700 tokens）
-- 换来的是长期质量保证
-
-**对比**：
-- 不用检查清单：第30章质量差 → 用户要求重写10章 → 浪费数万tokens
-- 用检查清单：每章+1700 tokens → 50章也只+85000 tokens → 但质量稳定
-
-### Q: 我能跳过检查清单吗？
-
-**A**: 技术上可以，但**强烈不推荐**。
+### 캐시 전략
 
 ```
-"跳过检查清单，直接写作"
-→ AI会警告："不推荐，可能导致失焦"
-→ 但会尊重你的选择
-```
-
-**后果自负**：30章后失焦了别说我没提醒你😊
-
-### Q: 某些文件我确实没有怎么办？
-
-**A**: 分两种情况：
-
-**必需文件缺失**（constitution、specification等）：
-→ 阻止写作，提示先运行对应命令创建
-
-**可选文件缺失**（style-reference、plot-tracker）：
-→ 警告但允许继续，建议后续创建
-
-### Q: 检查清单和setting-detector的关系？
-
-**A**: 互补工作：
-
-```
-pre-write-checklist：
-- 加载项目特定文件（你的故事数据）
-
-setting-detector：
-- 加载通用知识库（类型惯例、写作技巧）
-
-两者结合 = 完整context：
-你的故事设定 + 类型专业知识
-```
-
-### Q: 100章的长篇小说也要每次都读吗？
-
-**A**: 是的，而且**更需要**。
-
-```
-长篇小说的挑战：
-- 设定更复杂
-- 角色更多
-- 情节线更多
-- AI更容易忘记
-
-检查清单的作用：
-- 确保第100章和第1章质量一致
-- 防止角色性格突变
-- 防止情节自相矛盾
-
-这是长篇小说质量保证的基石。
+같은 집필 세션 내:
+첫 집필: 모든 파일 읽기 (1700 tokens)
+두 번째 집필 (1시간 내): 파일 수정 여부 검사
+- 수정 없음: 캐시 사용 (0 tokens)
+- 수정됨: 재읽기 (일부 tokens)
 ```
 
 ---
 
-## 最佳实践
+## 자주 묻는 질문
 
-### 1. 保持文件更新
+### Q: 매번 이렇게 많은 파일을 읽으면 느리지 않나요?
 
-检查清单只能确保AI读取文件，但文件内容要准确：
+**A**: 아닙니다.
+- 파일 읽기는 빠름 (밀리초 단위)
+- token 소비가 합리적 (~1700 tokens)
+- 대가는 장기 품질 보증
 
-```
-✓ 角色状态变化 → 更新 character-state.json
-✓ 关系变化 → 更新 relationships.json
-✓ 新情节线 → 更新 plot-tracker.json
-```
+**비교**:
+- 체크리스트 없이: 30장 품질 저하 → 사용자가 10장 재작성 요청 → 수만 tokens 낭비
+- 체크리스트 사용: 매장 +1700 tokens → 50장에도 +85000 tokens → 하지만 품질 안정
 
-### 2. 定期运行 `/track`
+### Q: 체크리스트를 건너뛸 수 있나요?
 
-```
-建议频率：每5-10章运行一次 `/track`
-作用：
-- 更新tracking文件
-- 验证一致性
-- 发现潜在问题
-```
-
-### 3. 重要变更后手动触发
+**A**: 기술적으로 가능하지만, **강력히 비권장**.
 
 ```
-如果你手动修改了关键文件：
-"请重新执行检查清单，重新加载所有文件"
-
-确保AI看到最新状态。
+"체크리스트 건너뛰고 바로 집필"
+→ AI가 경고: "비권장, 집중력 저하 가능"
+→ 하지만 선택을 존중
 ```
 
-### 4. 与consistency-checker配合
+**결과는 본인 책임**: 30장 후 집중력 저하되면 제가 경고했음을 기억하세요
+
+### Q: 일부 파일이 정말 없으면 어떻게?
+
+**A**: 두 가지 경우:
+
+**필수 파일 누락** (constitution, specification 등):
+→ 집필 차단, 먼저 해당 명령을 실행하여 생성하라고 안내
+
+**선택 파일 누락** (style-reference, plot-tracker):
+→ 경고하되 계속 허용, 나중에 생성 권장
+
+### Q: 체크리스트와 setting-detector의 관계는?
+
+**A**: 상호 보완적:
 
 ```
-pre-write-checklist（写前）：
-- 加载所有context
-- 准备写作
+pre-write-checklist:
+- 프로젝트별 파일 로드 (당신의 이야기 데이터)
 
-consistency-checker（写中/写后）：
-- 监控一致性
-- 发现矛盾
+setting-detector:
+- 범용 지식 베이스 로드 (장르 관습, 집필 기법)
+
+둘의 결합 = 완전한 컨텍스트:
+당신의 이야기 설정 + 장르 전문 지식
 ```
 
-双重保障 = 最高质量。
+### Q: 100장 장편소설도 매번 다 읽어야 하나요?
 
----
-
-## 技术实现
-
-### 文件读取顺序
+**A**: 네, 그리고 **더욱 필요합니다**.
 
 ```
-优先级排序（重要的先读）：
-1. constitution（最高原则）
-2. specification（故事核心）
-3. creative-plan（技术方案）
-4. tasks（当前任务）
-5. character-state（角色数据）
-6. relationships（关系数据）
-7. plot-tracker（情节追踪）
-8. validation-rules（验证规则）
-9. style-reference（风格参考）
-```
+장편소설의 도전:
+- 설정이 더 복잡
+- 캐릭터가 더 많음
+- 플롯 라인이 더 많음
+- AI가 더 쉽게 잊음
 
-### 错误处理
+체크리스트의 역할:
+- 100장이 1장과 같은 품질 보장
+- 캐릭터 성격 돌변 방지
+- 플롯 자기 모순 방지
 
-```
-文件不存在：
-→ 必需文件：阻止写作，提示创建
-→ 可选文件：警告，允许继续
-
-文件格式错误：
-→ JSON解析失败：显示错误，建议修复
-→ Markdown格式问题：尽力读取，标记问题
-
-文件过大：
-→ 超过10000行：警告（可能影响性能）
-→ 建议拆分文件
+장편소설 품질 보증의 초석입니다.
 ```
 
 ---
 
-## 总结
+## 모범 사례
 
-pre-write-checklist是Novel Writer Skills v1.0的**核心创新**：
+### 1. 파일을 최신 상태로 유지
 
-✓ 解决AI长篇失焦问题
-✓ 强制重读关键文件
-✓ 确保context完整性
-✓ 保持质量长期稳定
-✓ 适合专业作者长篇创作
+체크리스트는 AI가 파일을 읽게 할 뿐, 파일 내용이 정확해야:
 
-**30章后不再失焦 = 长期竞争力** 🎯
+```
+✓ 캐릭터 상태 변화 → character-state.json 업데이트
+✓ 관계 변화 → relationships.json 업데이트
+✓ 새 플롯 라인 → plot-tracker.json 업데이트
+```
+
+### 2. 정기적으로 `/track` 실행
+
+```
+권장 빈도: 매 5-10장마다 `/track` 실행
+효과:
+- tracking 파일 업데이트
+- 일관성 검증
+- 잠재적 문제 발견
+```
+
+### 3. 중요 변경 후 수동 트리거
+
+```
+핵심 파일을 수동 수정한 경우:
+"체크리스트를 재실행하여, 모든 파일을 재로드해 주세요"
+
+AI가 최신 상태를 보도록 합니다.
+```
+
+### 4. consistency-checker와 배합
+
+```
+pre-write-checklist (집필 전):
+- 모든 컨텍스트 로드
+- 집필 준비
+
+consistency-checker (집필 중/후):
+- 일관성 모니터링
+- 모순 발견
+```
+
+이중 보장 = 최고 품질.
 
 ---
 
-**本Skill版本**: v1.0
-**最后更新**: 2025-10-18
-**核心问题**: 解决30章后AI失焦
-**配合**: write.md, setting-detector, consistency-checker
+## 기술 구현
+
+### 파일 읽기 순서
+
+```
+우선순위 (중요한 것 먼저):
+1. constitution (최고 원칙)
+2. specification (이야기 핵심)
+3. creative-plan (기술적 방안)
+4. tasks (현재 작업)
+5. character-state (캐릭터 데이터)
+6. relationships (관계 데이터)
+7. plot-tracker (플롯 추적)
+8. validation-rules (검증 규칙)
+9. style-reference (스타일 참조)
+```
+
+### 오류 처리
+
+```
+파일 없음:
+→ 필수 파일: 집필 차단, 생성 안내
+→ 선택 파일: 경고, 계속 허용
+
+파일 형식 오류:
+→ JSON 파싱 실패: 오류 표시, 수정 제안
+→ Markdown 형식 문제: 최선을 다해 읽기, 문제 표시
+
+파일 너무 큼:
+→ 10000행 초과: 경고 (성능에 영향 가능)
+→ 파일 분할 제안
+```
+
+---
+
+## 요약
+
+pre-write-checklist는 Novel Writer Skills v1.0의 **핵심 혁신**입니다:
+
+✓ AI 장편 집중력 저하 문제 해결
+✓ 핵심 파일 강제 재읽기
+✓ 컨텍스트 완전성 확보
+✓ 품질 장기 안정 유지
+✓ 전문 작가의 장편 창작에 적합
+
+**30장 이후에도 집중력 저하 없음 = 장기 경쟁력** 🎯
+
+---
+
+**본 Skill 버전**: v1.0
+**최종 업데이트**: 2025-10-18
+**핵심 문제**: 30장 후 AI 집중력 저하 해결
+**배합**: write.md, setting-detector, consistency-checker
