@@ -1,103 +1,102 @@
-# Changelog
+# 변경 이력
 
-All notable changes to this project will be documented in this file.
+이 프로젝트의 주요 변경 사항을 이 파일에 기록합니다.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+형식은 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)를 기반으로 하며,
+이 프로젝트는 [Semantic Versioning](https://semver.org/spec/v2.0.0.html)을 따릅니다.
 
 ## [1.0.0] - 2025-10-18
 
-### Added
+### 추가
 
-#### 核心功能
-- 🎯 完整的七步方法论 Slash Commands
-  - `/constitution` - 创建创作宪法
-  - `/specify` - 定义故事规格
-  - `/clarify` - 澄清关键决策
-  - `/plan` - 制定创作计划
-  - `/tasks` - 分解任务清单
-  - `/write` - AI 辅助写作
-  - `/analyze` - 质量验证分析
+#### 핵심 기능
+- 🎯 완전한 7단계 방법론 Slash Commands
+  - `/constitution` - 창작 헌법 생성
+  - `/specify` - 스토리 스펙 정의
+  - `/clarify` - 핵심 결정 명확화
+  - `/plan` - 창작 계획 수립
+  - `/tasks` - 태스크 목록 분해
+  - `/write` - AI 보조 집필
+  - `/analyze` - 품질 검증 분석
 
-- 📊 追踪与验证命令
-  - `/track-init` - 初始化追踪系统
-  - `/track` - 综合追踪更新
-  - `/plot-check` - 情节一致性检查
-  - `/timeline` - 时间线管理
-  - `/relations` - 角色关系追踪
-  - `/world-check` - 世界观验证
+- 📊 추적 및 검증 명령어
+  - `/track-init` - 추적 시스템 초기화
+  - `/track` - 종합 추적 업데이트
+  - `/plot-check` - 플롯 일관성 검사
+  - `/timeline` - 타임라인 관리
+  - `/relations` - 캐릭터 관계 추적
+  - `/world-check` - 세계관 검증
 
-#### Agent Skills 系统
+#### Agent Skills 시스템
 - 🤖 Genre Knowledge Skills
-  - Romance - 言情小说惯例和情感节奏
-  - Mystery - 推理悬疑技巧和线索管理
-  - Fantasy - 奇幻设定规范和世界构建
+  - Romance - 로맨스 소설 관례와 감정 리듬
+  - Mystery - 추리/미스터리 기법과 단서 관리
+  - Fantasy - 판타지 설정 규범과 세계관 구축
 
 - ✍️ Writing Techniques Skills
-  - Dialogue Techniques - 对话自然度和角色声音
-  - Scene Structure - 场景构建和节奏控制
-  - Character Arc - 角色弧线和成长逻辑
+  - Dialogue Techniques - 대화 자연스러움과 캐릭터 목소리
+  - Scene Structure - 장면 구성과 리듬 제어
+  - Character Arc - 캐릭터 아크와 성장 논리
 
 - 🔍 Quality Assurance Skills
-  - Consistency Checker - 一致性自动监控
-  - Workflow Guide - 七步方法论引导
+  - Consistency Checker - 일관성 자동 모니터링
+  - Workflow Guide - 7단계 방법론 안내
 
-#### CLI 工具
-- 📦 项目管理
-  - `novel-skills init` - 初始化项目
-  - `novel-skills check` - 检查环境
-  - `novel-skills upgrade` - 升级项目
+#### CLI 도구
+- 📦 프로젝트 관리
+  - `novel-skills init` - 프로젝트 초기화
+  - `novel-skills check` - 환경 확인
+  - `novel-skills upgrade` - 프로젝트 업그레이드
 
-- 🔌 插件系统
-  - `novel-skills plugin:list` - 列出已安装插件
-  - `novel-skills plugin:add` - 安装插件
-  - `novel-skills plugin:remove` - 移除插件
+- 🔌 플러그인 시스템
+  - `novel-skills plugin:list` - 설치된 플러그인 목록
+  - `novel-skills plugin:add` - 플러그인 설치
+  - `novel-skills plugin:remove` - 플러그인 제거
 
-#### 文档
-- 📚 完整文档体系
-  - README.md - 项目概览
-  - Getting Started - 入门指南
-  - Commands Guide - 命令详解
-  - Skills Guide - Skills 指南
-  - Plugin Development - 插件开发
+#### 문서
+- 📚 완전한 문서 체계
+  - README.md - 프로젝트 개요
+  - Getting Started - 시작 가이드
+  - Commands Guide - 명령어 상세 설명
+  - Skills Guide - Skills 가이드
+  - Plugin Development - 플러그인 개발
 
-### Features
+### 기능
 
-- ✨ Claude Code 深度集成
-- ✨ Agent Skills 自动激活机制
-- ✨ 智能质量检查系统
-- ✨ 可扩展插件架构
-- ✨ 完整的项目模板
+- ✨ Claude Code 깊은 통합
+- ✨ Agent Skills 자동 활성화 메커니즘
+- ✨ 스마트 품질 검사 시스템
+- ✨ 확장 가능한 플러그인 아키텍처
+- ✨ 완전한 프로젝트 템플릿
 
-### Technical
+### 기술
 
-- 🛠️ TypeScript 实现
-- 🛠️ ES Module 支持
+- 🛠️ TypeScript 구현
+- 🛠️ ES Module 지원
 - 🛠️ Node.js >= 18.0.0
-- 🛠️ 基于 Commander.js 的 CLI
-- 🛠️ 完整的类型定义
+- 🛠️ Commander.js 기반 CLI
+- 🛠️ 완전한 타입 정의
 
 ---
 
-## [Unreleased]
+## [미출시]
 
-### Planned
+### 계획
 
-- 📝 更多类型 Skills（科幻、惊悚、历史等）
-- 📝 更多写作技巧 Skills
-- 📝 高级质量检查功能
-- 📝 更多官方插件
-- 📝 示例项目和教程
+- 📝 더 많은 장르 Skills (SF, 스릴러, 역사 등)
+- 📝 더 많은 글쓰기 기법 Skills
+- 📝 고급 품질 검사 기능
+- 📝 더 많은 공식 플러그인
+- 📝 예제 프로젝트와 튜토리얼
 
 ---
 
-**注释**：
-- 🎯 核心功能
+**범례**:
+- 🎯 핵심 기능
 - 🤖 Agent Skills
-- 📦 CLI 工具
-- 📚 文档
-- ✨ 新特性
-- 🛠️ 技术改进
-- 🐛 Bug 修复
-- 🔒 安全更新
-
+- 📦 CLI 도구
+- 📚 문서
+- ✨ 새 기능
+- 🛠️ 기술 개선
+- 🐛 버그 수정
+- 🔒 보안 업데이트

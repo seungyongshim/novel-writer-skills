@@ -1,51 +1,51 @@
-# ✅ 脚本运用验证总结
+# ✅ 스크립트 활용 검증 요약
 
-## 问题回顾
+## 문제 회고
 
-**用户反馈**: "试用了下 novel writer skills，初始化项目似乎遗漏了 scripts，没有生成脚本"
+**사용자 피드백**: "novel writer skills를 사용해 봤는데, 프로젝트 초기화 시 scripts가 누락된 것 같습니다. 스크립트가 생성되지 않았습니다"
 
-## 解决方案
+## 해결 방안
 
-### 1. 脚本已完整复制 ✅
+### 1. 스크립트 완전 복사 완료 ✅
 
-从 `novel-writer` 项目复制了 **34个脚本**:
-- ✅ 18个 Bash 脚本 (macOS/Linux)
-- ✅ 16个 PowerShell 脚本 (Windows)
+`novel-writer` 프로젝트에서 **34개 스크립트** 복사:
+- ✅ 18개 Bash 스크립트 (macOS/Linux)
+- ✅ 16개 PowerShell 스크립트 (Windows)
 
-### 2. 路径已完全适配 ✅
+### 2. 경로 완전 적응 완료 ✅
 
-修复了 **11个脚本文件**，共 **21处路径**:
+**11개 스크립트 파일**에서 **21곳의 경로** 수정:
 - `memory/constitution.md` → `.specify/memory/constitution.md`
 
-### 3. 脚本已验证可用 ✅
+### 3. 스크립트 검증 완료 ✅
 
-实际测试证明脚本运行正常:
+실제 테스트로 스크립트 정상 작동 확인:
 ```bash
-✅ constitution.sh check    - 正确识别 .specify/memory/constitution.md
-✅ specify-story.sh         - 正确检测宪法并显示提示
-✅ check-writing-state.sh   - 正确检查文档状态
-✅ plan-story.sh            - 正确检测依赖关系
+✅ constitution.sh check    - .specify/memory/constitution.md 정상 인식
+✅ specify-story.sh         - 헌법 감지 및 프롬프트 정상 표시
+✅ check-writing-state.sh   - 문서 상태 정상 확인
+✅ plan-story.sh            - 의존성 관계 정상 감지
 ```
 
-## 用户使用方式
+## 사용 방법
 
-### 初始化项目后
+### 프로젝트 초기화 후
 
 ```bash
 novelwrite init my-novel
 cd my-novel
 ```
 
-### 查看脚本
+### 스크립트 확인
 
 ```bash
 ls .specify/templates/scripts/
-# bash/       - 18个脚本
-# powershell/ - 16个脚本  
-# README.md   - 使用说明
+# bash/       - 18개 스크립트
+# powershell/ - 16개 스크립트
+# README.md   - 사용 설명서
 ```
 
-### 运行脚本
+### 스크립트 실행
 
 **macOS/Linux:**
 ```bash
@@ -61,23 +61,23 @@ bash .specify/templates/scripts/bash/track-progress.sh
 .\.specify\templates\scripts\powershell\track-progress.ps1
 ```
 
-## 文档位置
+## 문서 위치
 
-1. **主 README**: `/README.md` - 新增"命令行脚本"章节
-2. **脚本说明**: `/templates/scripts/README.md` - 详细使用指南
-3. **适配报告**: `/SCRIPT_ADAPTATION_REPORT.md` - 完整技术报告
+1. **메인 README**: `/README.md` - "명령줄 스크립트" 섹션 추가
+2. **스크립트 설명**: `/templates/scripts/README.md` - 상세 사용 가이드
+3. **적응 보고서**: `/SCRIPT_ADAPTATION_REPORT.md` - 완전한 기술 보고서
 
-## 结论
+## 결론
 
-✅ **脚本已完全运用并可正常使用！**
+✅ **스크립트가 완전히 활용 가능하며 정상 작동합니다!**
 
-用户现在可以通过两种方式使用 novel-writer-skills：
+사용자는 이제 두 가지 방식으로 novel-writer-skills를 사용할 수 있습니다:
 
-1. **Slash Commands** (推荐) - 在 Claude Code 中使用 `/constitution`, `/write` 等
-2. **命令行脚本** - 在终端中运行脚本，适合自动化和批处理
+1. **Slash Commands** (추천) - Claude Code에서 `/constitution`, `/write` 등 사용
+2. **명령줄 스크립트** - 터미널에서 스크립트 실행, 자동화 및 일괄 처리에 적합
 
 ---
 
-**验证日期**: 2025-10-20  
-**验证人**: AI Assistant  
-**状态**: ✅ 完成
+**검증 일자**: 2025-10-20
+**검증자**: AI Assistant
+**상태**: ✅ 완료
