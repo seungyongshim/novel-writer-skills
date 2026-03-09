@@ -23,11 +23,11 @@ path = r'''$File'''
 cfg_path = r'''$cfg'''
 text = open(path, 'r', encoding='utf-8', errors='ignore').read()
 default_cfg = {
-  "connector_phrases": ["首先","其次","再次","然后","然而","总而言之","综上所述","在某种程度","众所周知","在当下","随着"],
-  "empty_phrases": ["广泛关注","引发热议","影响深远","具有重要意义","有效提升","具有一定的指导意义","值得我们思考"],
+  "connector_phrases": ["우선","다음으로","또한","그런 다음","그러나","요약하면","종합하면","어느 정도","주지하다시피","현재","~에 따라"],
+  "empty_phrases": ["광범위한 관심","뜨거운 논의","심원한 영향","중요한 의의","효과적 향상","일정한 지도적 의의","우리가 생각해볼 만한"],
   "cliche_pairs": [],
   "sentence_length": {"max_run_long":4, "max_run_short":5, "short_threshold":12, "long_threshold":35},
-  "abstract_nouns": ["价值","意义","认知","体系","模式","路径","方法论","趋势"],
+  "abstract_nouns": ["가치","의의","인식","체계","모드","경로","방법론","추세"],
   "min_concrete_details": 3
 }
 cfg = default_cfg
