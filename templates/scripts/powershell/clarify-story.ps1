@@ -3,8 +3,8 @@ param(
     [switch]$PathsOnly
 )
 
-# 澄清故事大纲的支撑脚本
-# 用于 /clarify 命令，扫描并返回当前故事路径
+# 스토리 개요 명확화 지원 스크립트
+# /clarify 명령어용, 현재 스토리 경로 스캔 및 반환
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
@@ -25,7 +25,7 @@ if (-not (Test-Path $StoriesDir -PathType Container)) {
     if ($Json) {
         Write-Output '{"error": "No stories directory found"}'
     } else {
-        Write-Error "错误：未找到 stories 目录，请先运行 /story 创建故事大纲"
+        Write-Error "오류: stories 디렉토리를 찾을 수 없습니다. 먼저 /story 를 실행하여 스토리 개요를 작성하세요"
     }
     exit 1
 }
@@ -36,7 +36,7 @@ if ($StoryDirs.Count -eq 0) {
     if ($Json) {
         Write-Output '{"error": "No story found"}'
     } else {
-        Write-Error "错误：未找到故事，请先运行 /story 创建故事大纲"
+        Write-Error "오류: 스토리를 찾을 수 없습니다. 먼저 /story 를 실행하여 스토리 개요를 작성하세요"
     }
     exit 1
 }
@@ -44,14 +44,14 @@ if ($StoryDirs.Count -eq 0) {
 $StoryDir = $StoryDirs[0]
 $StoryName = $StoryDir.Name
 
-# Find story file (新格式 specification.md)
+# Find story file (새 형식 specification.md)
 $StoryFile = Join-Path $StoryDir.FullName "specification.md"
 
 if (-not (Test-Path $StoryFile -PathType Leaf)) {
     if ($Json) {
         Write-Output '{"error": "Story file not found (specification.md required)"}'
     } else {
-        Write-Error "错误：未找到故事文件 specification.md"
+        Write-Error "오류: 스토리 파일 specification.md 를 찾을 수 없습니다"
     }
     exit 1
 }
@@ -59,14 +59,14 @@ if (-not (Test-Path $StoryFile -PathType Leaf)) {
 # Check if clarification already exists
 $ClarificationExists = $false
 $StoryContent = Get-Content $StoryFile -Raw
-if ($StoryContent -match "## 澄清记录") {
+if ($StoryContent -match "## 명확화 기록") {
     $ClarificationExists = $true
 }
 
 # Count existing clarification sessions
 $ClarificationCount = 0
 if ($ClarificationExists) {
-    $matches = [regex]::Matches($StoryContent, "### 澄清会话")
+    $matches = [regex]::Matches($StoryContent, "### 명확화 세션")
     $ClarificationCount = $matches.Count
 }
 
@@ -97,11 +97,11 @@ if ($Json) {
     }
     Write-Output (ConvertTo-Json $output -Compress)
 } else {
-    Write-Output "找到故事：$StoryName"
-    Write-Output "文件路径：$StoryFile"
+    Write-Output "스토리 발견: $StoryName"
+    Write-Output "파일 경로: $StoryFile"
     if ($ClarificationExists) {
-        Write-Output "已有澄清会话：$ClarificationCount 次"
+        Write-Output "기존 명확화 세션: $ClarificationCount 회"
     } else {
-        Write-Output "尚未进行过澄清"
+        Write-Output "아직 명확화가 진행되지 않았습니다"
     }
 }

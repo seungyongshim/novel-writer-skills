@@ -1,77 +1,77 @@
-# 小说创作宪法管理脚本
-# 用于 /constitution 命令
+# 소설 창작 헌법 관리 스크립트
+# /constitution 명령어용
 
 param(
     [string]$Command = "check"
 )
 
-# 导入通用函数
+# 공통 함수 가져오기
 . "$PSScriptRoot\common.ps1"
 
-# 获取项目根目录
+# 프로젝트 루트 디렉토리 가져오기
 $ProjectRoot = Get-ProjectRoot
 Set-Location $ProjectRoot
 
-# 定义文件路径
+# 파일 경로 정의
 $ConstitutionFile = ".specify\memory\constitution.md"
 
 switch ($Command) {
     "check" {
-        # 检查宪法文件是否存在
+        # 헌법 파일 존재 여부 확인
         if (Test-Path $ConstitutionFile) {
-            Write-Host "✅ 宪法文件已存在：$ConstitutionFile" -ForegroundColor Green
+            Write-Host "✅ 헌법 파일이 존재합니다: $ConstitutionFile" -ForegroundColor Green
 
-            # 提取版本信息
+            # 버전 정보 추출
             $content = Get-Content $ConstitutionFile -Raw
-            if ($content -match "- 版本：(.+)") {
+            if ($content -match "- 버전：(.+)") {
                 $version = $matches[1].Trim()
             } else {
-                $version = "未知"
+                $version = "알 수 없음"
             }
 
-            if ($content -match "- 最后修订：(.+)") {
+            if ($content -match "- 최종 수정：(.+)") {
                 $updated = $matches[1].Trim()
             } else {
-                $updated = "未知"
+                $updated = "알 수 없음"
             }
 
-            Write-Host "  版本：$version"
-            Write-Host "  最后修订：$updated"
+            Write-Host "  버전: $version"
+            Write-Host "  최종 수정: $updated"
             exit 0
         }
         else {
-            Write-Host "❌ 尚未创建宪法文件" -ForegroundColor Red
-            Write-Host "  建议：运行 /constitution 创建创作宪法"
+            Write-Host "❌ 헌법 파일이 아직 생성되지 않았습니다" -ForegroundColor Red
+            Write-Host "  제안: /constitution 을 실행하여 창작 헌법을 작성하세요"
             exit 1
         }
     }
 
     "init" {
-        # 初始化宪法文件
+        # 헌법 파일 초기화
         $dir = Split-Path $ConstitutionFile -Parent
         if (-not (Test-Path $dir)) {
             New-Item -ItemType Directory -Path $dir -Force | Out-Null
         }
 
         if (Test-Path $ConstitutionFile) {
-            Write-Host "宪法文件已存在，准备更新"
+            Write-Host "헌법 파일이 이미 존재합니다. 업데이트 준비 완료"
         }
         else {
-            Write-Host "准备创建新的宪法文件"
+            Write-Host "새 헌법 파일 생성 준비 완료"
         }
     }
 
     "validate" {
-        # 验证宪法文件格式
+        # 헌법 파일 형식 검증
         if (-not (Test-Path $ConstitutionFile)) {
-            Write-Host "错误：宪法文件不存在" -ForegroundColor Red
+            Write-Host "오류: 헌법 파일이 존재하지 않습니다" -ForegroundColor Red
             exit 1
         }
 
-        Write-Host "验证宪法文件..."
+        Write-Host "헌법 파일 검증 중..."
 
-        # 检查必要章节
-        $requiredSections = @("核心价值观", "质量标准", "创作风格", "内容规范", "读者契约")
+        # 필수 섹션 확인
+        $requiredSections = @("핵심 가치관", "품질 기준", "창작 스타일", "콘텐츠 규범", "독자 계약")
         $content = Get-Content $ConstitutionFile -Raw
         $missingSections = @()
 
@@ -82,61 +82,61 @@ switch ($Command) {
         }
 
         if ($missingSections.Count -gt 0) {
-            Write-Host "⚠️ 缺少以下章节：" -ForegroundColor Yellow
+            Write-Host "⚠️ 다음 섹션이 누락되었습니다:" -ForegroundColor Yellow
             foreach ($section in $missingSections) {
                 Write-Host "  - $section"
             }
         }
         else {
-            Write-Host "✅ 所有必要章节都存在" -ForegroundColor Green
+            Write-Host "✅ 모든 필수 섹션이 존재합니다" -ForegroundColor Green
         }
 
-        # 检查版本信息
-        if ($content -match "^- 版本：") {
-            Write-Host "✅ 版本信息完整" -ForegroundColor Green
+        # 버전 정보 확인
+        if ($content -match "^- 버전：") {
+            Write-Host "✅ 버전 정보 완비" -ForegroundColor Green
         }
         else {
-            Write-Host "⚠️ 缺少版本信息" -ForegroundColor Yellow
+            Write-Host "⚠️ 버전 정보가 누락되었습니다" -ForegroundColor Yellow
         }
     }
 
     "export" {
-        # 导出宪法摘要
+        # 헌법 요약 내보내기
         if (-not (Test-Path $ConstitutionFile)) {
-            Write-Host "错误：宪法文件不存在" -ForegroundColor Red
+            Write-Host "오류: 헌법 파일이 존재하지 않습니다" -ForegroundColor Red
             exit 1
         }
 
-        Write-Host "# 创作宪法摘要"
+        Write-Host "# 창작 헌법 요약"
         Write-Host ""
 
         $content = Get-Content $ConstitutionFile -Raw
 
-        # 提取核心原则
-        Write-Host "## 核心原则"
-        if ($content -match "### 原则[\s\S]*?\*\*声明\*\*：(.+)") {
+        # 핵심 원칙 추출
+        Write-Host "## 핵심 원칙"
+        if ($content -match "### 원칙[\s\S]*?\*\*선언\*\*：(.+)") {
             Write-Host $matches[1]
         }
         else {
-            Write-Host "（未找到原则声明）"
+            Write-Host "(원칙 선언을 찾을 수 없습니다)"
         }
 
         Write-Host ""
-        Write-Host "## 质量底线"
-        if ($content -match "### 标准[\s\S]*?\*\*要求\*\*：(.+)") {
+        Write-Host "## 품질 기준선"
+        if ($content -match "### 기준[\s\S]*?\*\*요구\*\*：(.+)") {
             Write-Host $matches[1]
         }
         else {
-            Write-Host "（未找到质量标准）"
+            Write-Host "(품질 기준을 찾을 수 없습니다)"
         }
 
         Write-Host ""
-        Write-Host "详细内容请查看：$ConstitutionFile"
+        Write-Host "상세 내용은 다음 파일을 확인하세요: $ConstitutionFile"
     }
 
     default {
-        Write-Host "未知命令：$Command" -ForegroundColor Red
-        Write-Host "支持的命令：check, init, validate, export"
+        Write-Host "알 수 없는 명령어: $Command" -ForegroundColor Red
+        Write-Host "지원되는 명령어: check, init, validate, export"
         exit 1
     }
 }

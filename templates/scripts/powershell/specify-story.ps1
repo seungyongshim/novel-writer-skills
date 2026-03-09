@@ -1,21 +1,21 @@
-# 故事规格定义脚本
-# 用于 /specify 命令
+# 스토리 사양 정의 스크립트
+# /specify 명령어용
 
 param(
     [switch]$Json,
     [string]$StoryName
 )
 
-# 导入通用函数
+# 공통 함수 가져오기
 . "$PSScriptRoot\common.ps1"
 
-# 获取项目根目录
+# 프로젝트 루트 디렉토리 가져오기
 $ProjectRoot = Get-ProjectRoot
 Set-Location $ProjectRoot
 
-# 确定故事名称和路径
+# 스토리 이름과 경로 결정
 if ([string]::IsNullOrEmpty($StoryName)) {
-    # 查找最新的故事
+    # 최신 스토리 찾기
     $StoriesDir = "stories"
     if (Test-Path $StoriesDir) {
         $latestStory = Get-ChildItem $StoriesDir -Directory |
@@ -27,22 +27,22 @@ if ([string]::IsNullOrEmpty($StoryName)) {
         }
     }
 
-    # 如果还是没有，生成默认名称
+    # 여전히 없으면 기본 이름 생성
     if ([string]::IsNullOrEmpty($StoryName)) {
         $StoryName = "story-$(Get-Date -Format 'yyyyMMdd')"
     }
 }
 
-# 设置路径
+# 경로 설정
 $StoryDir = "stories\$StoryName"
 $SpecFile = "$StoryDir\specification.md"
 
-# 创建目录
+# 디렉토리 생성
 if (-not (Test-Path $StoryDir)) {
     New-Item -ItemType Directory -Path $StoryDir -Force | Out-Null
 }
 
-# 检查文件状态
+# 파일 상태 확인
 $SpecExists = $false
 $Status = "new"
 
@@ -51,7 +51,7 @@ if (Test-Path $SpecFile) {
     $Status = "exists"
 }
 
-# 输出 JSON 格式
+# JSON 형식 출력
 if ($Json) {
     @{
         STORY_NAME = $StoryName
@@ -62,21 +62,21 @@ if ($Json) {
     } | ConvertTo-Json
 }
 else {
-    Write-Host "故事规格初始化"
+    Write-Host "스토리 사양 초기화"
     Write-Host "================"
-    Write-Host "故事名称：$StoryName"
-    Write-Host "规格路径：$SpecFile"
+    Write-Host "스토리 이름: $StoryName"
+    Write-Host "사양 경로: $SpecFile"
 
     if ($SpecExists) {
-        Write-Host "状态：规格文件已存在，准备更新"
+        Write-Host "상태: 사양 파일이 이미 존재합니다. 업데이트 준비 완료"
     }
     else {
-        Write-Host "状态：准备创建新规格"
+        Write-Host "상태: 새 사양 생성 준비 완료"
     }
 
-    # 检查宪法
+    # 헌법 확인
     if (Test-Path ".specify\memory\constitution.md") {
         Write-Host ""
-        Write-Host "✅ 检测到创作宪法，规格将遵循宪法原则" -ForegroundColor Green
+        Write-Host "✅ 창작 헌법이 감지되었습니다. 사양은 헌법 원칙을 따릅니다" -ForegroundColor Green
     }
 }

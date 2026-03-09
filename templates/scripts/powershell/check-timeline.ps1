@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# 时间线管理与检查（PowerShell）
+# 타임라인 관리 및 검사 (PowerShell)
 
 param(
   [ValidateSet('show','add','check','sync')]
@@ -15,49 +15,49 @@ $ErrorActionPreference = 'Stop'
 
 $root = Get-ProjectRoot
 $storyDir = Get-CurrentStoryDir
-if (-not $storyDir) { throw "未找到故事项目（stories/*）" }
+if (-not $storyDir) { throw "스토리 프로젝트를 찾을 수 없습니다 (stories/*)" }
 
 $timelinePath = Join-Path $storyDir "spec/tracking/timeline.json"
 if (-not (Test-Path $timelinePath)) { $timelinePath = Join-Path $root "spec/tracking/timeline.json" }
 
 function Init-Timeline {
   if (-not (Test-Path $timelinePath)) {
-    Write-Host "⚠️  未找到时间线文件，正在创建..."
+    Write-Host "⚠️  타임라인 파일을 찾을 수 없어 생성 중..."
     $tpl = Join-Path $root "templates/tracking/timeline.json"
-    if (-not (Test-Path $tpl)) { throw "无法找到模板文件" }
+    if (-not (Test-Path $tpl)) { throw "템플릿 파일을 찾을 수 없습니다" }
     New-Item -ItemType Directory -Path (Split-Path $timelinePath -Parent) -Force | Out-Null
     Copy-Item $tpl $timelinePath -Force
-    Write-Host "✅ 时间线文件已创建"
+    Write-Host "✅ 타임라인 파일이 생성되었습니다"
   }
 }
 
 function Show-Timeline {
-  Write-Host "📅 故事时间线"
+  Write-Host "📅 스토리 타임라인"
   Write-Host "━━━━━━━━━━━━━━━━━━━━"
-  if (-not (Test-Path $timelinePath)) { Write-Host "未找到时间线文件"; return }
+  if (-not (Test-Path $timelinePath)) { Write-Host "타임라인 파일을 찾을 수 없습니다"; return }
   $j = Get-Content -LiteralPath $timelinePath -Raw -Encoding UTF8 | ConvertFrom-Json
   $cur = $j.storyTime.current
-  if (-not $cur) { $cur = '未设定' }
-  Write-Host "⏰ 当前时间：$cur"
+  if (-not $cur) { $cur = '미설정' }
+  Write-Host "⏰ 현재 시간: $cur"
   Write-Host ""
   $events = @($j.events)
   if ($events.Count -gt 0) {
-    Write-Host "📖 重要事件："
+    Write-Host "📖 주요 이벤트:"
     Write-Host "───────────────"
     $events | Sort-Object chapter -Descending | Select-Object -First 5 | ForEach-Object {
-      Write-Host ("第{0}章 | {1} | {2}" -f $_.chapter, $_.date, $_.event)
+      Write-Host ("제{0}장 | {1} | {2}" -f $_.chapter, $_.date, $_.event)
     }
   }
   $p = $j.parallelEvents.timepoints
   if ($p) {
     Write-Host ""
-    Write-Host "🔄 并行事件："
+    Write-Host "🔄 병렬 이벤트:"
     $p.PSObject.Properties | ForEach-Object { Write-Host ("{0}: {1}" -f $_.Name, (@($_.Value) -join ', ')) }
   }
 }
 
 function Add-Event([int]$chapter, [string]$date, [string]$event) {
-  if (-not $chapter -or -not $date -or -not $event) { throw "用法: check-timeline.ps1 add <章节号> <时间> <事件描述>" }
+  if (-not $chapter -or -not $date -or -not $event) { throw "사용법: check-timeline.ps1 add <챕터번호> <시간> <이벤트설명>" }
   Init-Timeline
   $j = Get-Content -LiteralPath $timelinePath -Raw -Encoding UTF8 | ConvertFrom-Json
   if (-not $j.events) { $j | Add-Member -NotePropertyName events -NotePropertyValue @() }
@@ -65,26 +65,26 @@ function Add-Event([int]$chapter, [string]$date, [string]$event) {
   $j.events = @($j.events | Sort-Object chapter)
   $j.lastUpdated = (Get-Date).ToString('yyyy-MM-ddTHH:mm:ss')
   $j | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $timelinePath -Encoding UTF8
-  Write-Host "✅ 事件已添加：第${chapter}章 - $date - $event"
+  Write-Host "✅ 이벤트 추가됨: 제${chapter}장 - $date - $event"
 }
 
 function Check-Continuity {
-  Write-Host "🔍 检查时间线连续性"
+  Write-Host "🔍 타임라인 연속성 검사"
   Write-Host "━━━━━━━━━━━━━━━━━━━━"
-  if (-not (Test-Path $timelinePath)) { throw "时间线文件不存在" }
+  if (-not (Test-Path $timelinePath)) { throw "타임라인 파일이 존재하지 않습니다" }
   $j = Get-Content -LiteralPath $timelinePath -Raw -Encoding UTF8 | ConvertFrom-Json
   $chapters = @($j.events | Sort-Object chapter | ForEach-Object { $_.chapter })
   $issues = 0
   $prev = -1
   foreach ($c in $chapters) {
     if ($prev -ge 0 -and $c -le $prev) {
-      Write-Host "⚠️  章节顺序异常：第$c 章出现在第$prev 章之后"
+      Write-Host "⚠️  챕터 순서 이상: 제${c}장이 제${prev}장 뒤에 나타남"
       $issues++
     }
     $prev = $c
   }
-  if ($issues -eq 0) { Write-Host "`n✅ 时间线检查通过，未发现逻辑问题" }
-  else { Write-Host "`n⚠️  发现${issues}个潜在问题，请检查" }
+  if ($issues -eq 0) { Write-Host "`n✅ 타임라인 검사 통과, 논리 문제가 발견되지 않았습니다" }
+  else { Write-Host "`n⚠️  ${issues}개의 잠재적 문제가 발견되었습니다. 확인하세요" }
   $j.lastChecked = (Get-Date).ToString('yyyy-MM-ddTHH:mm:ss')
   if (-not $j.anomalies) { $j | Add-Member anomalies (@{}) }
   $j.anomalies.lastCheckIssues = $issues
@@ -92,7 +92,7 @@ function Check-Continuity {
 }
 
 function Sync-Parallel([string]$timepoint, [string]$eventsCsv) {
-  if (-not $timepoint -or -not $eventsCsv) { throw "用法: check-timeline.ps1 sync <时间点> <事件列表,逗号分隔>" }
+  if (-not $timepoint -or -not $eventsCsv) { throw "사용법: check-timeline.ps1 sync <시간대> <이벤트목록,쉼표구분>" }
   Init-Timeline
   $j = Get-Content -LiteralPath $timelinePath -Raw -Encoding UTF8 | ConvertFrom-Json
   if (-not $j.parallelEvents) { $j | Add-Member -NotePropertyName parallelEvents -NotePropertyValue @{ timepoints=@{} } }
@@ -100,7 +100,7 @@ function Sync-Parallel([string]$timepoint, [string]$eventsCsv) {
   $j.parallelEvents.timepoints[$timepoint] = $events
   $j.lastUpdated = (Get-Date).ToString('yyyy-MM-ddTHH:mm:ss')
   $j | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $timelinePath -Encoding UTF8
-  Write-Host "✅ 并行事件已同步：$timepoint"
+  Write-Host "✅ 병렬 이벤트 동기화 완료: $timepoint"
 }
 
 switch ($Command) {
@@ -109,4 +109,3 @@ switch ($Command) {
   'check' { Check-Continuity }
   'sync'  { Sync-Parallel -timepoint $Param1 -eventsCsv $Param2 }
 }
-

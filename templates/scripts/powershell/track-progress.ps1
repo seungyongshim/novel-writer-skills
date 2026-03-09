@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# 综合追踪小说创作进度（PowerShell）
+# 소설 창작 진행도 종합 추적 (PowerShell)
 
 param(
   [switch]$check,
@@ -20,80 +20,80 @@ $progress = Join-Path $root "stories/current/progress.json"
 $plotPath = Join-Path $root "spec/tracking/plot-tracker.json"
 
 function Show-BasicReport {
-  Write-Host "📊 小说创作综合报告"
+  Write-Host "📊 소설 창작 종합 보고서"
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   if (Test-Path $progress) {
-    Write-Host "✍️ 写作进度"
-    Write-Host "  完成情况等待分析..."
+    Write-Host "✍️ 집필 진행도"
+    Write-Host "  완료 상황 분석 대기 중..."
   }
   if (Test-Path $plotPath) {
-    Write-Host "📍 情节状态"
-    Write-Host "  主线进度等待分析..."
+    Write-Host "📍 줄거리 상태"
+    Write-Host "  메인 스토리 진행도 분석 대기 중..."
   }
 }
 
 function Run-DeepCheck {
-  Write-Host "🔍 执行深度验证..."
+  Write-Host "🔍 심층 검증 실행 중..."
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  Write-Host "Phase 1: 基础验证"
-  Write-Host "  [P] 执行情节一致性检查..."
-  Write-Host "  [P] 执行时间线验证..."
-  Write-Host "  [P] 执行关系验证..."
-  Write-Host "  [P] 执行世界观验证..."
-  Write-Host "Phase 2: 角色深度验证"
+  Write-Host "Phase 1: 기본 검증"
+  Write-Host "  [P] 줄거리 일관성 검사 실행..."
+  Write-Host "  [P] 타임라인 검증 실행..."
+  Write-Host "  [P] 관계 검증 실행..."
+  Write-Host "  [P] 세계관 검증 실행..."
+  Write-Host "Phase 2: 캐릭터 심층 검증"
   $rules = Join-Path $root "spec/tracking/validation-rules.json"
   if (Test-Path $rules) {
-    Write-Host "  ✅ 加载验证规则"
+    Write-Host "  ✅ 검증 규칙 로드 완료"
     Set-Content -LiteralPath "$env:TEMP/validation-tasks.md" -Encoding UTF8 -Value @"
-# 验证任务 (自动生成)
+# 검증 작업 (자동 생성)
 
-## Phase 1: 基础验证 [并行]
-- [ ] T001 [P] 执行情节一致性检查
-- [ ] T002 [P] 执行时间线验证
-- [ ] T003 [P] 执行关系验证
-- [ ] T004 [P] 执行世界观验证
+## Phase 1: 기본 검증 [병렬]
+- [ ] T001 [P] 줄거리 일관성 검사 실행
+- [ ] T002 [P] 타임라인 검증 실행
+- [ ] T003 [P] 관계 검증 실행
+- [ ] T004 [P] 세계관 검증 실행
 
-## Phase 2: 角色验证
-- [ ] T005 加载validation-rules.json
-- [ ] T006 扫描章节角色名称
-- [ ] T007 验证名称一致性
-- [ ] T008 检查称呼准确性
-- [ ] T009 验证行为一致性
+## Phase 2: 캐릭터 검증
+- [ ] T005 validation-rules.json 로드
+- [ ] T006 챕터 내 캐릭터 이름 스캔
+- [ ] T007 이름 일관성 검증
+- [ ] T008 호칭 정확성 확인
+- [ ] T009 행동 일관성 검증
 
-## Phase 3: 生成报告
-- [ ] T010 汇总结果
-- [ ] T011 标记问题
-- [ ] T012 生成建议
+## Phase 3: 보고서 생성
+- [ ] T010 결과 취합
+- [ ] T011 문제 표시
+- [ ] T012 개선 제안 생성
 "@
-    Write-Host "  ✅ 验证任务已生成"
+    Write-Host "  ✅ 검증 작업 생성 완료"
   } else {
-    Write-Host "  ⚠️ 未找到验证规则文件"
+    Write-Host "  ⚠️ 검증 규칙 파일을 찾을 수 없습니다"
   }
-  Write-Host "📊 深度验证报告"
+  Write-Host "📊 심층 검증 보고서"
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  Write-Host "AI将分析所有章节并生成详细报告..."
-  Write-Host "💡 提示：发现问题后可运行 --fix 自动修复"
+  Write-Host "AI가 모든 챕터를 분석하여 상세 보고서를 생성합니다..."
+  Write-Host "💡 팁: 문제 발견 시 --fix 를 실행하여 자동 수정할 수 있습니다"
 }
 
 function Run-AutoFix {
-  Write-Host "🔧 执行自动修复..."
+  Write-Host "🔧 자동 수정 실행 중..."
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   Set-Content -LiteralPath "$env:TEMP/fix-tasks.md" -Encoding UTF8 -Value @"
-# 修复任务 (自动生成)
+# 수정 작업 (자동 생성)
 
-## Phase 1: 简单修复 [可自动]
-- [ ] F001 读取验证报告
-- [ ] F002 [P] 修复角色名称错误
-- [ ] F003 [P] 修复称呼错误
-- [ ] F004 [P] 修复简单拼写
+## Phase 1: 간단한 수정 [자동 가능]
+- [ ] F001 검증 보고서 읽기
+- [ ] F002 [P] 캐릭터 이름 오류 수정
+- [ ] F003 [P] 호칭 오류 수정
+- [ ] F004 [P] 간단한 오탈자 수정
 
-## Phase 2: 生成报告
-- [ ] F005 汇总修复结果
-- [ ] F006 更新追踪文件
+## Phase 2: 보고서 생성
+- [ ] F005 수정 결과 취합
+- [ ] F006 추적 파일 업데이트
 "@
-  Write-Host "🔧 自动修复报告"
+  Write-Host "🔧 자동 수정 보고서"
   Write-Host "━━━━━━━━━━━━━━━━━━━"
-  Write-Host "AI将自动修复简单问题..."
+  Write-Host "AI가 간단한 문제를 자동으로 수정합니다..."
 }
 
 if ($check) { Run-DeepCheck }
@@ -101,5 +101,4 @@ elseif ($fix) { Run-AutoFix }
 else { Show-BasicReport }
 
 Write-Host ""
-Write-Host "✅ 追踪分析完成"
-
+Write-Host "✅ 추적 분석 완료"

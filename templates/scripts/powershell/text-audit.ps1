@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# 离线文本人味自查（PowerShell）
+# 오프라인 텍스트 자연스러움 자가 진단 (PowerShell)
 
 param(
   [Parameter(Mandatory=$true)][string]$File
@@ -15,7 +15,7 @@ $cfgProject = Join-Path $root "spec/knowledge/audit-config.json"
 $cfgTemplate = Join-Path $root ".specify/templates/knowledge/audit-config.json"
 $cfg = if (Test-Path $cfgProject) { $cfgProject } elseif (Test-Path $cfgTemplate) { $cfgTemplate } else { '' }
 
-if (-not (Test-Path $File)) { throw "用法: text-audit.ps1 -File <路径>" }
+if (-not (Test-Path $File)) { throw "사용법: text-audit.ps1 -File <경로>" }
 
 python3 - << PY
 import json, re, sys, os, math
@@ -65,36 +65,35 @@ abstract_top = [(i,sents[i]) for i,sc in abstract_scores[:5] if sc>=2]
 total_chars = len(text)
 def ratio(c): return (c/max(1,total_chars))*1000
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("📊 离线文本人味自查报告")
-print(f"文件: {os.path.basename(path)}  字符数: {total_chars}")
+print("📊 오프라인 텍스트 자연스러움 진단 보고서")
+print(f"파일: {os.path.basename(path)}  문자 수: {total_chars}")
 print("")
-print("连接词密度（每千字出现次数）")
-tc=sum(connectors.values()); print(f"  总计: {tc}  | 比率: {ratio(tc):.2f}")
+print("접속사 밀도 (천 자당 출현 횟수)")
+tc=sum(connectors.values()); print(f"  합계: {tc}  | 비율: {ratio(tc):.2f}")
 for k,v in sorted(connectors.items(), key=lambda x: -x[1])[:10]:
   if v>0: print(f"  - {k}: {v}")
 print("")
-print("空话/套话计数")
-te=sum(empties.values()); print(f"  总计: {te}  | 比率: {ratio(te):.2f}")
+print("빈말/상투어 카운트")
+te=sum(empties.values()); print(f"  합계: {te}  | 비율: {ratio(te):.2f}")
 for k,v in sorted(empties.items(), key=lambda x: -x[1])[:10]:
   if v>0: print(f"  - {k}: {v}")
 print("")
-print("句长统计")
-print(f"  句子数: {len(lens)}  | 平均: {avg:.1f}  | 标准差: {std:.1f}")
-print(f"  连续短句最大: {mx_run_short} (阈值 {cfg['sentence_length']['max_run_short']})")
-print(f"  连续长句最大: {mx_run_long} (阈值 {cfg['sentence_length']['max_run_long']})")
+print("문장 길이 통계")
+print(f"  문장 수: {len(lens)}  | 평균: {avg:.1f}  | 표준편차: {std:.1f}")
+print(f"  연속 단문 최대: {mx_run_short} (임계값 {cfg['sentence_length']['max_run_short']})")
+print(f"  연속 장문 최대: {mx_run_long} (임계값 {cfg['sentence_length']['max_run_long']})")
 print("")
-print("抽象过载（示例段，≥2 抽象词）")
+print("추상어 과다 (예시 문장, 추상어 2개 이상)")
 if abstract_top:
   for idx,s in abstract_top:
     sn = s[:80] + ("…" if len(s)>80 else "")
-    print(f"  - 第{idx+1}句: {sn}")
+    print(f"  - 제{idx+1}문장: {sn}")
 else:
-  print("  无显著抽象过载片段")
+  print("  현저한 추상어 과다 구간 없음")
 print("")
-print("建议")
-print("  - 用具体动作/器物/气味替代空话与抽象名词")
-print("  - 打断长长串句子；合并过多的短句以形成起伏")
-print("  - 复查连接词是否可删除或自然过渡")
-print("  - 写前先列3个生活细节作为锚点")
+print("제안")
+print("  - 빈말과 추상 명사를 구체적인 동작/사물/감각으로 대체하세요")
+print("  - 긴 문장 연속을 끊고, 지나치게 짧은 문장은 합쳐 리듬감을 만드세요")
+print("  - 접속사가 삭제 가능하거나 자연스러운 전환으로 대체 가능한지 재확인하세요")
+print("  - 집필 전에 생활 디테일 3가지를 앵커로 준비하세요")
 PY
-

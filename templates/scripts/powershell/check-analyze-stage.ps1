@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
-# 检测 analyze 命令应该执行的阶段
-# 返回 JSON 格式的阶段信息
+# analyze 명령어가 실행해야 할 단계를 감지
+# JSON 형식의 단계 정보 반환
 
 param(
     [switch]$Json
@@ -9,25 +9,25 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# 加载公共函数
+# 공통 함수 로드
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $scriptDir "common.ps1")
 
-# 获取项目根目录和故事目录
+# 프로젝트 루트 디렉토리와 스토리 디렉토리 가져오기
 try {
     $projectRoot = Get-ProjectRoot
     $storyDir = Get-CurrentStoryDir
 } catch {
-    Write-Error "错误: $_"
+    Write-Error "오류: $_"
     exit 1
 }
 
 if (-not $storyDir) {
-    Write-Error "错误: 未找到故事目录"
+    Write-Error "오류: 스토리 디렉토리를 찾을 수 없습니다"
     exit 1
 }
 
-# 默认返回值
+# 기본 반환값
 $analyzeType = "content"
 $chapterCount = 0
 $hasSpec = $false
@@ -35,55 +35,55 @@ $hasPlan = $false
 $hasTasks = $false
 $reason = ""
 
-# 检查规格文件
+# 사양 파일 확인
 $specPath = Join-Path $storyDir "specification.md"
 if (Test-Path $specPath) {
     $hasSpec = $true
 }
 
-# 检查计划文件
+# 계획 파일 확인
 $planPath = Join-Path $storyDir "creative-plan.md"
 if (Test-Path $planPath) {
     $hasPlan = $true
 }
 
-# 检查任务文件
+# 작업 파일 확인
 $tasksPath = Join-Path $storyDir "tasks.md"
 if (Test-Path $tasksPath) {
     $hasTasks = $true
 }
 
-# 统计章节数量
+# 챕터 수 집계
 $contentDir = Join-Path $storyDir "content"
 if (-not (Test-Path $contentDir)) {
     $contentDir = Join-Path $storyDir "chapters"
 }
 
 if (Test-Path $contentDir) {
-    # 统计 .md 文件数量（排除索引文件）
+    # .md 파일 수 집계 (인덱스 파일 제외)
     $chapters = Get-ChildItem -Path $contentDir -Filter "*.md" -File |
                 Where-Object { $_.Name -notin @("README.md", "index.md") }
     $chapterCount = $chapters.Count
 }
 
-# 决策逻辑
+# 결정 로직
 if ($chapterCount -eq 0) {
-    # 无章节内容 → 框架分析
+    # 챕터 콘텐츠 없음 → 프레임워크 분석
     $analyzeType = "framework"
-    $reason = "无章节内容，建议进行框架一致性分析"
+    $reason = "챕터 콘텐츠가 없습니다. 프레임워크 일관성 분석을 권장합니다"
 } elseif ($chapterCount -lt 3) {
-    # 章节数量不足 → 框架分析（但提示可以开始写作）
+    # 챕터 수 부족 → 프레임워크 분석 (집필 계속 권장)
     $analyzeType = "framework"
-    $reason = "章节数量较少（$chapterCount 章），建议继续写作或进行框架验证"
+    $reason = "챕터 수가 적습니다 ($chapterCount 장). 집필 계속 또는 프레임워크 검증을 권장합니다"
 } else {
-    # 章节充足 → 内容分析
+    # 챕터 충분 → 콘텐츠 분석
     $analyzeType = "content"
-    $reason = "已完成 $chapterCount 章，可进行内容质量分析"
+    $reason = "$chapterCount 장이 완료되었습니다. 콘텐츠 품질 분석이 가능합니다"
 }
 
-# 输出 JSON 或人类可读格式
+# JSON 또는 사람이 읽기 쉬운 형식으로 출력
 if ($Json) {
-    # JSON 格式输出
+    # JSON 형식 출력
     $output = @{
         analyze_type = $analyzeType
         chapter_count = $chapterCount
@@ -96,15 +96,15 @@ if ($Json) {
 
     $output | ConvertTo-Json -Compress
 } else {
-    # 人类可读输出
-    Write-Host "分析阶段检测结果"
+    # 사람이 읽기 쉬운 출력
+    Write-Host "분석 단계 감지 결과"
     Write-Host "=================="
-    Write-Host "故事目录: $storyDir"
-    Write-Host "章节数量: $chapterCount"
-    Write-Host "规格文件: $(if ($hasSpec) { '✅' } else { '❌' })"
-    Write-Host "计划文件: $(if ($hasPlan) { '✅' } else { '❌' })"
-    Write-Host "任务文件: $(if ($hasTasks) { '✅' } else { '❌' })"
+    Write-Host "스토리 디렉토리: $storyDir"
+    Write-Host "챕터 수: $chapterCount"
+    Write-Host "사양 파일: $(if ($hasSpec) { '✅' } else { '❌' })"
+    Write-Host "계획 파일: $(if ($hasPlan) { '✅' } else { '❌' })"
+    Write-Host "작업 파일: $(if ($hasTasks) { '✅' } else { '❌' })"
     Write-Host ""
-    Write-Host "推荐模式: $analyzeType"
-    Write-Host "原因: $reason"
+    Write-Host "권장 모드: $analyzeType"
+    Write-Host "사유: $reason"
 }

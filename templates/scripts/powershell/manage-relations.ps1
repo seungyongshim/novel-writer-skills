@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# 角色关系管理（PowerShell）
+# 캐릭터 관계 관리 (PowerShell)
 
 param(
   [ValidateSet('show','update','history','check')]
@@ -31,35 +31,35 @@ if ($storyDir -and (Test-Path (Join-Path $storyDir 'spec/tracking/relationships.
   New-Item -ItemType Directory -Path (Split-Path $dest -Parent) -Force | Out-Null
   if (Test-Path $tpl1) { Copy-Item $tpl1 $dest -Force; $relPath = $dest }
   elseif (Test-Path $tpl2) { Copy-Item $tpl2 $dest -Force; $relPath = $dest }
-  else { throw '未找到 relationships.json，且无法从模板创建' }
+  else { throw 'relationships.json 을 찾을 수 없으며 템플릿으로부터 생성할 수도 없습니다' }
 }
 
-function Show-Header { Write-Host "👥 角色关系管理"; Write-Host "━━━━━━━━━━━━━━━━━━━━" }
+function Show-Header { Write-Host "👥 캐릭터 관계 관리"; Write-Host "━━━━━━━━━━━━━━━━━━━━" }
 
 function Show-Relations {
   Show-Header
-  try { $j = Get-Content -LiteralPath $relPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { throw 'relationships.json 格式无效' }
-  Write-Host "文件：$relPath"; Write-Host ''
+  try { $j = Get-Content -LiteralPath $relPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { throw 'relationships.json 형식이 유효하지 않습니다' }
+  Write-Host "파일: $relPath"; Write-Host ''
   $main = $j.characters.PSObject.Properties.Name | Select-Object -First 1
-  if (-not $main) { Write-Host '无角色记录'; return }
-  Write-Host "主角：$main"
+  if (-not $main) { Write-Host '캐릭터 기록 없음'; return }
+  Write-Host "주인공: $main"
   $c = $j.characters.$main
   $r = if ($c.relationships) { $c.relationships } else { $c }
   $map = @{
-    romantic = '💕 爱慕'; allies='🤝 盟友'; mentors='📚 导师'; enemies='⚔️ 敌对'; family='👪 家人'; neutral='・ 关系'
+    romantic = '💕 연애'; allies='🤝 동맹'; mentors='📚 스승'; enemies='⚔️ 적대'; family='👪 가족'; neutral='・ 관계'
   }
   foreach ($k in 'romantic','allies','mentors','enemies','family','neutral') {
     $lst = @($r.$k)
-    if ($lst.Count -gt 0) { Write-Host ("├─ {0}：{1}" -f $map[$k], ($lst -join '、')) }
+    if ($lst.Count -gt 0) { Write-Host ("├─ {0}: {1}" -f $map[$k], ($lst -join ', ')) }
   }
   Write-Host ''
   if ($j.history) {
-    Write-Host '最近变化：'
+    Write-Host '최근 변화:'
     $last = $j.history[-1]
-    if ($last) { $last.changes | ForEach-Object { Write-Host ("- " + ($_.characters -join '↔') + "：" + ($_.relation ?? $_.type)) } }
+    if ($last) { $last.changes | ForEach-Object { Write-Host ("- " + ($_.characters -join '↔') + ": " + ($_.relation ?? $_.type)) } }
   } elseif ($j.relationshipChanges) {
-    Write-Host '最近变化：'
-    $j.relationshipChanges | Select-Object -Last 5 | ForEach-Object { Write-Host ("- " + ($_.type ?? '变化') + ": " + ($_.characters -join '↔')) }
+    Write-Host '최근 변화:'
+    $j.relationshipChanges | Select-Object -Last 5 | ForEach-Object { Write-Host ("- " + ($_.type ?? '변화') + ": " + ($_.characters -join '↔')) }
   }
 }
 
@@ -70,7 +70,7 @@ function Ensure-Character($json, [string]$name) {
 }
 
 function Update-Relation([string]$a, [string]$rel, [string]$b) {
-  if (-not $a -or -not $rel -or -not $b) { throw '用法: manage-relations.ps1 update -A 人物A -Relation allies|enemies|romantic|neutral|family|mentors -B 人物B [-Chapter N] [-Note 说明]' }
+  if (-not $a -or -not $rel -or -not $b) { throw '사용법: manage-relations.ps1 update -A 인물A -Relation allies|enemies|romantic|neutral|family|mentors -B 인물B [-Chapter N] [-Note 설명]' }
   $j = Get-Content -LiteralPath $relPath -Raw -Encoding UTF8 | ConvertFrom-Json
   Ensure-Character $j $a
   Ensure-Character $j $b
@@ -88,7 +88,7 @@ function Update-Relation([string]$a, [string]$rel, [string]$b) {
     $j | Add-Member -NotePropertyName history -NotePropertyValue @()
   }
   $j | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $relPath -Encoding UTF8
-  Write-Host "✅ 已更新关系：$a [$rel] $b"
+  Write-Host "✅ 관계 업데이트 완료: $a [$rel] $b"
 }
 
 function Show-History {
@@ -97,12 +97,12 @@ function Show-History {
   if ($j.history) {
     foreach ($h in $j.history) {
       $chap = if ($h.chapter) { $h.chapter } else { 0 }
-      $desc = ($h.changes | ForEach-Object { ($_.characters -join '↔') + '→' + ($_.relation ?? $_.type) }) -join '；'
-      Write-Host ("第{0}章：{1}" -f $chap, $desc)
+      $desc = ($h.changes | ForEach-Object { ($_.characters -join '↔') + '→' + ($_.relation ?? $_.type) }) -join '; '
+      Write-Host ("제{0}장: {1}" -f $chap, $desc)
     }
   } elseif ($j.relationshipChanges) {
     foreach ($h in $j.relationshipChanges) { Write-Host ((($h.date ?? '') + ' ' + ($h.type ?? '') + ': ' + ($h.characters -join '↔') + '→' + ($h.relation ?? ''))) }
-  } else { Write-Host '暂无历史记录' }
+  } else { Write-Host '아직 기록이 없습니다' }
 }
 
 function Check-Relations {
@@ -120,9 +120,9 @@ function Check-Relations {
   $refs = $refs | Where-Object { $_ } | Select-Object -Unique
   $missing = @($refs | Where-Object { $names -notcontains $_ })
   if ($missing.Count -gt 0) {
-    Write-Host "⚠ 发现未建档角色引用，建议补充："
+    Write-Host "⚠ 미등록 캐릭터 참조가 발견되었습니다. 보충을 권장합니다:"
     $missing | ForEach-Object { Write-Host "  - $_" }
-  } else { Write-Host "✅ 关系数据检查通过" }
+  } else { Write-Host "✅ 관계 데이터 검사 통과" }
 }
 
 switch ($Command) {
@@ -131,4 +131,3 @@ switch ($Command) {
   'history'{ Show-History }
   'check'  { Check-Relations }
 }
-
