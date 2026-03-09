@@ -1,187 +1,186 @@
-# 脚本工具集
+# 스크립트 도구 모음
 
-本目录包含 Novel Writer Skills 的命令行脚本工具，作为 Claude Code Slash Commands 的替代方案。
+이 디렉토리에는 Novel Writer Skills의 명령줄 스크립트 도구가 포함되어 있으며, Claude Code Slash Commands의 대안으로 사용됩니다.
 
-## 📂 目录结构
+## 디렉토리 구조
 
 ```text
 scripts/
-├── bash/          # macOS/Linux 脚本
-├── powershell/    # Windows 脚本
-└── README.md      # 本文档
+├── bash/          # macOS/Linux 스크립트
+├── powershell/    # Windows 스크립트
+└── README.md      # 본 문서
 ```
 
-## 🔄 novel-writer-skills 适配说明
+## novel-writer-skills 적응 설명
 
-这些脚本已从 [novel-writer](https://github.com/wordflowlab/novel-writer) 移植并适配到 novel-writer-skills 项目结构：
+이 스크립트들은 [novel-writer](https://github.com/wordflowlab/novel-writer)에서 이식되어 novel-writer-skills 프로젝트 구조에 맞게 적응되었습니다:
 
-### 路径差异
+### 경로 차이
 
-| 文件 | novel-writer | novel-writer-skills |
+| 파일 | novel-writer | novel-writer-skills |
 |------|-------------|-------------------|
-| 宪法文件 | `memory/constitution.md` | `.specify/memory/constitution.md` |
-| 故事规格 | `stories/*/specification.md` | `stories/*/specification.md` ✅ |
-| 追踪数据 | `spec/tracking/*.json` | `spec/tracking/*.json` ✅ |
+| 헌법 파일 | `memory/constitution.md` | `.specify/memory/constitution.md` |
+| 스토리 규격 | `stories/*/specification.md` | `stories/*/specification.md` ✅ |
+| 추적 데이터 | `spec/tracking/*.json` | `spec/tracking/*.json` ✅ |
 
-**所有脚本已自动适配新路径**，无需手动修改！
+**모든 스크립트는 새 경로에 자동 적응되어 있으며**, 수동 수정이 필요 없습니다!
 
-## 🎯 使用场景
+## 사용 시나리오
 
-虽然 Novel Writer Skills 主要为 Claude Code 设计，但这些脚本提供了：
+Novel Writer Skills는 주로 Claude Code용으로 설계되었지만, 이 스크립트들은 다음을 제공합니다:
 
-- ✅ **命令行替代方案** - 在终端中直接执行操作
-- ✅ **自动化工作流** - 集成到 CI/CD 或自动化脚本中
-- ✅ **批处理操作** - 处理多个故事或批量检查
-- ✅ **独立工具** - 不依赖 Claude Code 的独立功能
+- ✅ **명령줄 대안** - 터미널에서 직접 작업 실행
+- ✅ **자동화 워크플로** - CI/CD 또는 자동화 스크립트에 통합
+- ✅ **배치 처리** - 여러 스토리 처리 또는 일괄 검사
+- ✅ **독립 도구** - Claude Code에 의존하지 않는 독립 기능
 
-## 🚀 快速开始
+## 빠른 시작
 
-### macOS/Linux 用户
+### macOS/Linux 사용자
 
 ```bash
-# 进入项目根目录
+# 프로젝트 루트 디렉토리로 이동
 cd my-novel
 
-# 使用脚本（示例：创建宪法）
+# 스크립트 사용 (예시: 헌법 생성)
 bash .specify/templates/scripts/bash/constitution.sh
 
-# 或者添加到 PATH
+# 또는 PATH에 추가
 export PATH="$PATH:$(pwd)/.specify/templates/scripts/bash"
 constitution.sh
 ```
 
-### Windows 用户
+### Windows 사용자
 
 ```powershell
-# 进入项目根目录
+# 프로젝트 루트 디렉토리로 이동
 cd my-novel
 
-# 使用脚本（示例：创建宪法）
+# 스크립트 사용 (예시: 헌법 생성)
 .\.specify\templates\scripts\powershell\constitution.ps1
 
-# 或者添加到环境变量
+# 또는 환경 변수에 추가
 $env:PATH += ";$(Get-Location)\.specify\templates\scripts\powershell"
 constitution.ps1
 ```
 
-## 📚 核心脚本
+## 핵심 스크립트
 
-### 七步方法论
+### 7단계 방법론
 
-| 脚本 | 功能 | 对应命令 |
-|-----|------|---------|
-| `constitution.sh/ps1` | 创建创作宪法 | `/constitution` |
-| `specify-story.sh/ps1` | 定义故事规格 | `/specify` |
-| `clarify-story.sh/ps1` | 澄清模糊点 | `/clarify` |
-| `plan-story.sh/ps1` | 制定创作计划 | `/plan` |
-| `generate-tasks.sh/ps1` | 生成任务清单 | `/tasks` |
-| `analyze-story.sh/ps1` | 质量验证分析 | `/analyze` |
+| 스크립트 | 기능 | 대응 명령 |
+|---------|------|----------|
+| `constitution.sh/ps1` | 창작 헌법 생성 | `/constitution` |
+| `specify-story.sh/ps1` | 스토리 규격 정의 | `/specify` |
+| `clarify-story.sh/ps1` | 모호한 부분 명확화 | `/clarify` |
+| `plan-story.sh/ps1` | 창작 계획 수립 | `/plan` |
+| `generate-tasks.sh/ps1` | 작업 체크리스트 생성 | `/tasks` |
+| `analyze-story.sh/ps1` | 품질 검증 분석 | `/analyze` |
 
-### 追踪与检查
+### 추적 및 검사
 
-| 脚本 | 功能 | 对应命令 |
-|-----|------|---------|
-| `init-tracking.sh/ps1` | 初始化追踪系统 | `/track-init` |
-| `track-progress.sh/ps1` | 综合追踪更新 | `/track` |
-| `check-plot.sh/ps1` | 情节一致性检查 | `/plot-check` |
-| `check-timeline.sh/ps1` | 时间线管理 | `/timeline` |
-| `manage-relations.sh/ps1` | 角色关系追踪 | `/relations` |
-| `check-world.sh/ps1` | 世界观验证 | `/world-check` |
-| `check-consistency.sh/ps1` | 一致性检查 | - |
-| `check-writing-state.sh/ps1` | 写作状态检查 | - |
+| 스크립트 | 기능 | 대응 명령 |
+|---------|------|----------|
+| `init-tracking.sh/ps1` | 추적 시스템 초기화 | `/track-init` |
+| `track-progress.sh/ps1` | 종합 추적 업데이트 | `/track` |
+| `check-plot.sh/ps1` | 플롯 일관성 검사 | `/plot-check` |
+| `check-timeline.sh/ps1` | 타임라인 관리 | `/timeline` |
+| `manage-relations.sh/ps1` | 캐릭터 관계 추적 | `/relations` |
+| `check-world.sh/ps1` | 세계관 검증 | `/world-check` |
+| `check-consistency.sh/ps1` | 일관성 검사 | - |
+| `check-writing-state.sh/ps1` | 집필 상태 검사 | - |
 
-### 工具脚本
+### 유틸리티 스크립트
 
-| 脚本 | 功能 |
-|-----|------|
-| `common.sh/ps1` | 通用函数库（被其他脚本引用） |
-| `text-audit.sh/ps1` | 文本审计工具 |
-| `test-word-count.sh` | 字数统计（仅 bash） |
+| 스크립트 | 기능 |
+|---------|------|
+| `common.sh/ps1` | 공통 함수 라이브러리 (다른 스크립트에서 참조) |
+| `text-audit.sh/ps1` | 텍스트 감사 도구 |
+| `test-word-count.sh` | 글자 수 통계 (bash 전용) |
 
-## 🔧 通用函数库
+## 공통 함수 라이브러리
 
-`common.sh` 和 `common.ps1` 提供了以下公共函数：
+`common.sh`와 `common.ps1`은 다음과 같은 공용 함수를 제공합니다:
 
-### Bash 函数
+### Bash 함수
 
 ```bash
-get_project_root()    # 获取项目根目录
-get_current_story()   # 获取当前故事目录
-get_active_story()    # 获取活跃故事名称
-create_numbered_dir() # 创建带编号的目录
+get_project_root()    # 프로젝트 루트 디렉토리 가져오기
+get_current_story()   # 현재 스토리 디렉토리 가져오기
+get_active_story()    # 활성 스토리 이름 가져오기
+create_numbered_dir() # 번호가 붙은 디렉토리 생성
 ```
 
-### PowerShell 函数
+### PowerShell 함수
 
 ```powershell
-Get-ProjectRoot       # 获取项目根目录
-Get-CurrentStoryDir   # 获取当前故事目录
-Get-ActiveStory       # 获取活跃故事名称
+Get-ProjectRoot       # 프로젝트 루트 디렉토리 가져오기
+Get-CurrentStoryDir   # 현재 스토리 디렉토리 가져오기
+Get-ActiveStory       # 활성 스토리 이름 가져오기
 ```
 
-## ⚠️ 注意事项
+## 주의사항
 
-1. **项目根目录识别** - 脚本通过查找 `.specify/config.json` 确定项目根目录
-2. **执行权限** - Linux/macOS 用户需要确保脚本有执行权限：
+1. **프로젝트 루트 디렉토리 인식** - 스크립트는 `.specify/config.json`을 찾아 프로젝트 루트 디렉토리를 결정합니다
+2. **실행 권한** - Linux/macOS 사용자는 스크립트에 실행 권한이 있는지 확인해야 합니다:
    ```bash
    chmod +x .specify/templates/scripts/bash/*.sh
    ```
-3. **与 Slash Commands 的区别**：
-   - Slash Commands 在 Claude Code 中使用，有 AI 交互能力
-   - 脚本适合自动化和批处理，无 AI 交互
-   - 推荐优先使用 Slash Commands 以获得最佳体验
+3. **Slash Commands와의 차이점**:
+   - Slash Commands는 Claude Code에서 사용하며, AI 상호작용 기능이 있습니다
+   - 스크립트는 자동화와 배치 처리에 적합하며, AI 상호작용이 없습니다
+   - 최상의 경험을 위해 Slash Commands 우선 사용을 권장합니다
 
-## 🆚 何时使用脚本 vs Slash Commands
+## 스크립트 vs Slash Commands 선택 가이드
 
-| 场景 | 推荐方式 |
-|-----|---------|
-| 日常创作、需要 AI 协助 | ✅ Slash Commands |
-| 批量处理、自动化 | ✅ 脚本 |
-| CI/CD 集成 | ✅ 脚本 |
-| 学习和理解工作流 | ✅ 脚本（可查看源码） |
-| 快速检查和验证 | ✅ 脚本 |
+| 시나리오 | 권장 방식 |
+|---------|----------|
+| 일상 창작, AI 보조 필요 | ✅ Slash Commands |
+| 배치 처리, 자동화 | ✅ 스크립트 |
+| CI/CD 통합 | ✅ 스크립트 |
+| 워크플로 학습과 이해 | ✅ 스크립트 (소스 코드 확인 가능) |
+| 빠른 검사 및 검증 | ✅ 스크립트 |
 
-## 📖 示例：完整工作流
+## 예시: 완전한 워크플로
 
 ```bash
-# 1. 创建宪法
+# 1. 헌법 생성
 bash constitution.sh
 
-# 2. 定义故事规格
+# 2. 스토리 규격 정의
 bash specify-story.sh
 
-# 3. 澄清模糊点（通常需要人工参与）
+# 3. 모호한 부분 명확화 (보통 사람의 참여 필요)
 bash clarify-story.sh
 
-# 4. 制定计划
+# 4. 계획 수립
 bash plan-story.sh
 
-# 5. 生成任务
+# 5. 작업 생성
 bash generate-tasks.sh
 
-# 6. 初始化追踪
+# 6. 추적 초기화
 bash init-tracking.sh
 
-# 7. 写作过程中定期追踪
+# 7. 집필 과정에서 정기적 추적
 bash track-progress.sh
 
-# 8. 最终分析
+# 8. 최종 분석
 bash analyze-story.sh
 ```
 
-## 🔗 相关文档
+## 관련 문서
 
-- [Novel Writer Skills 主文档](../../README.md)
-- [命令详解](../../docs/commands.md)
-- [入门指南](../../docs/getting-started.md)
+- [Novel Writer Skills 메인 문서](../../README.md)
+- [명령 상세 설명](../../docs/commands.md)
+- [시작하기 가이드](../../docs/getting-started.md)
 
-## 💡 提示
+## 팁
 
-这些脚本是从 [novel-writer](https://github.com/wordflowlab/novel-writer) 项目移植而来，经过调整以适配 Novel Writer Skills 的项目结构。
+이 스크립트들은 [novel-writer](https://github.com/wordflowlab/novel-writer) 프로젝트에서 이식되었으며, Novel Writer Skills의 프로젝트 구조에 맞게 조정되었습니다.
 
-如果你在多个 AI 工具间切换，也可以考虑使用完整版的 [novel-writer](https://github.com/wordflowlab/novel-writer)。
+여러 AI 도구 간에 전환하는 경우, 완전 버전의 [novel-writer](https://github.com/wordflowlab/novel-writer) 사용도 고려해 보세요.
 
 ---
 
 **Happy Writing!** ✨📚
-
