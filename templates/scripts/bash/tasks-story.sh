@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 任务分解脚本
-# 用于 /tasks 命令
+# 작업 분해 스크립트
+# /tasks 명령용
 
 set -e
 
@@ -19,7 +19,7 @@ fi
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 确定故事名称
+# 스토리 이름 결정
 if [ -z "$STORY_NAME" ]; then
     STORY_NAME=$(get_active_story)
 fi
@@ -29,68 +29,68 @@ SPEC_FILE="$STORY_DIR/specification.md"
 PLAN_FILE="$STORY_DIR/creative-plan.md"
 TASKS_FILE="$STORY_DIR/tasks.md"
 
-echo "任务分解"
+echo "작업 분해"
 echo "========"
-echo "故事：$STORY_NAME"
+echo "스토리: $STORY_NAME"
 echo ""
 
-# 检查前置文档
+# 선행 문서 확인
 missing=()
 
 if [ ! -f ".specify/memory/constitution.md" ]; then
-    missing+=("宪法文件")
+    missing+=("헌법 파일")
 fi
 
 if [ ! -f "$SPEC_FILE" ]; then
-    missing+=("规格文件")
+    missing+=("규격 파일")
 fi
 
 if [ ! -f "$PLAN_FILE" ]; then
-    missing+=("计划文件")
+    missing+=("계획 파일")
 fi
 
 if [ ${#missing[@]} -gt 0 ]; then
-    echo "⚠️ 缺少以下前置文档："
+    echo "⚠️ 다음 선행 문서가 누락됨:"
     for doc in "${missing[@]}"; do
         echo "  - $doc"
     done
     echo ""
-    echo "请先完成："
+    echo "먼저 다음을 완료하세요:"
     if [ ! -f ".specify/memory/constitution.md" ]; then
-        echo "  1. /constitution - 创建创作宪法"
+        echo "  1. /constitution - 창작 헌법 생성"
     fi
     if [ ! -f "$SPEC_FILE" ]; then
-        echo "  2. /specify - 定义故事规格"
+        echo "  2. /specify - 스토리 규격 정의"
     fi
     if [ ! -f "$PLAN_FILE" ]; then
-        echo "  3. /plan - 制定创作计划"
+        echo "  3. /plan - 창작 계획 수립"
     fi
     exit 1
 fi
 
-# 检查任务文件
+# 작업 파일 확인
 if [ -f "$TASKS_FILE" ]; then
     echo ""
-    echo "📋 任务文件已存在，将更新现有任务"
+    echo "📋 작업 파일이 이미 존재, 기존 작업 업데이트"
 
-    # 显示任务统计
+    # 작업 통계 표시
     total_tasks=$(grep -c "^- \[" "$TASKS_FILE" 2>/dev/null || echo "0")
     completed_tasks=$(grep -c "^- \[x\]" "$TASKS_FILE" 2>/dev/null || echo "0")
-    echo "  总任务数：$total_tasks"
-    echo "  已完成：$completed_tasks"
+    echo "  총 작업 수: $total_tasks"
+    echo "  완료: $completed_tasks"
 else
     echo ""
-    echo "📝 将创建新的任务清单"
+    echo "📝 새 작업 체크리스트 생성 예정"
 fi
 
 echo ""
-echo "任务文件路径：$TASKS_FILE"
+echo "작업 파일 경로: $TASKS_FILE"
 echo ""
-echo "准备就绪，可以分解任务"
+echo "준비 완료, 작업을 분해할 수 있습니다"
 echo ""
-echo "任务分解将包括："
-echo "  - 章节写作任务（基于计划）"
-echo "  - 角色档案完善"
-echo "  - 世界观文档补充"
-echo "  - 质量检查节点"
-echo "  - 验证和修订任务"
+echo "작업 분해에 포함되는 것:"
+echo "  - 장 집필 작업 (계획 기반)"
+echo "  - 캐릭터 프로필 보완"
+echo "  - 세계관 문서 보충"
+echo "  - 품질 검사 노드"
+echo "  - 검증 및 수정 작업"

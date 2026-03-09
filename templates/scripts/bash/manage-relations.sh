@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 角色关系管理（Bash）
+# 캐릭터 관계 관리 (Bash)
 
 set -e
 
@@ -15,7 +15,7 @@ if [ -n "$STORY_DIR" ] && [ -f "$STORY_DIR/spec/tracking/relationships.json" ]; 
 elif [ -f "$PROJECT_ROOT/spec/tracking/relationships.json" ]; then
   REL_FILE="$PROJECT_ROOT/spec/tracking/relationships.json"
 else
-  # 尝试用模板初始化
+  # 템플릿으로 초기화 시도
   mkdir -p "$PROJECT_ROOT/spec/tracking"
   if [ -f "$PROJECT_ROOT/.specify/templates/tracking/relationships.json" ]; then
     cp "$PROJECT_ROOT/.specify/templates/tracking/relationships.json" "$PROJECT_ROOT/spec/tracking/relationships.json"
@@ -24,7 +24,7 @@ else
     cp "$SCRIPT_DIR/../../templates/tracking/relationships.json" "$PROJECT_ROOT/spec/tracking/relationships.json"
     REL_FILE="$PROJECT_ROOT/spec/tracking/relationships.json"
   else
-    echo "❌ 未找到 relationships.json，且无法从模板创建" >&2
+    echo "❌ relationships.json을 찾을 수 없으며, 템플릿에서 생성할 수도 없음" >&2
     exit 1
   fi
 fi
@@ -33,26 +33,26 @@ CMD=${1:-show}
 shift || true
 
 print_header() {
-  echo "👥 角色关系管理"
+  echo "👥 캐릭터 관계 관리"
   echo "━━━━━━━━━━━━━━━━━━━━"
 }
 
 cmd_show() {
   print_header
   if ! jq empty "$REL_FILE" >/dev/null 2>&1; then
-    echo "❌ relationships.json 格式无效" >&2; exit 1
+    echo "❌ relationships.json 형식이 유효하지 않음" >&2; exit 1
   fi
 
-  echo "文件：$REL_FILE"
+  echo "파일: $REL_FILE"
   echo ""
-  # 输出主角或首个角色关系摘要
+  # 주인공 또는 첫 번째 캐릭터 관계 요약 출력
   local main_char=$(jq -r '.characters | keys[0] // ""' "$REL_FILE")
   if [ -z "$main_char" ] || [ "$main_char" = "null" ]; then
-    echo "无角色记录"
+    echo "캐릭터 기록 없음"
     exit 0
   fi
-  echo "主角：$main_char"
-  # 支持两种结构：嵌套 relationships 或直接分类键
+  echo "주인공: $main_char"
+  # 두 가지 구조 지원: 중첩된 relationships 또는 직접 분류 키
   jq -r --arg name "$main_char" '
     .characters[$name] as $c | 
     ($c.relationships // $c) as $r |
@@ -64,20 +64,20 @@ cmd_show() {
       {k:"family", v:($r.family // [])},
       {k:"neutral", v:($r.neutral // [])}
     ] | .[] | select((.v|length)>0) |
-    "├─ " + (if .k=="romantic" then "💕 爱慕" elseif .k=="allies" then "🤝 盟友" elseif .k=="mentors" then "📚 导师" elseif .k=="enemies" then "⚔️ 敌对" elseif .k=="family" then "👪 家人" else "・ 关系" end) + "：" + (.v | join("、"))
+    "├─ " + (if .k=="romantic" then "💕 연인" elseif .k=="allies" then "🤝 동맹" elseif .k=="mentors" then "📚 스승" elseif .k=="enemies" then "⚔️ 적대" elseif .k=="family" then "👪 가족" else "・ 관계" end) + ": " + (.v | join(", "))
   ' "$REL_FILE"
 
-  # 最近变化
+  # 최근 변화
   echo ""
   if jq -e '.history' "$REL_FILE" >/dev/null 2>&1; then
     local recent=$(jq -r '.history[-1] // empty' "$REL_FILE")
     if [ -n "$recent" ]; then
-      echo "最近变化："
-      jq -r '.history[-1].changes[]? | "- " + (.characters|join("↔")) + "：" + (.relation // .type // "变化")' "$REL_FILE"
+      echo "최근 변화:"
+      jq -r '.history[-1].changes[]? | "- " + (.characters|join("↔")) + ": " + (.relation // .type // "변화")' "$REL_FILE"
     fi
   elif jq -e '.relationshipChanges' "$REL_FILE" >/dev/null 2>&1; then
-    echo "最近变化："
-    jq -r '.relationshipChanges[-5:][]? | "- " + (.type // "变化") + ": " + (.characters|join("↔"))' "$REL_FILE" 2>/dev/null || true
+    echo "최근 변화:"
+    jq -r '.relationshipChanges[-5:][]? | "- " + (.type // "변화") + ": " + (.characters|join("↔"))' "$REL_FILE" 2>/dev/null || true
   fi
 }
 
@@ -92,11 +92,11 @@ cmd_update() {
     esac
   done
   if [ -z "$a" ] || [ -z "$rel" ] || [ -z "$b" ]; then
-    echo "用法: manage-relations.sh update <人物A> <allies|enemies|romantic|neutral|family|mentors> <人物B> [--chapter N] [--note 说明]" >&2
+    echo "사용법: manage-relations.sh update <인물A> <allies|enemies|romantic|neutral|family|mentors> <인물B> [--chapter N] [--note 설명]" >&2
     exit 1
   fi
 
-  # 确保角色节点存在
+  # 캐릭터 노드 존재 확인
   for name in "$a" "$b"; do
     if ! jq --arg n "$name" '(.characters[$n] // null) != null' "$REL_FILE" | grep -q true; then
       tmp=$(mktemp)
@@ -105,7 +105,7 @@ cmd_update() {
     fi
   done
 
-  # 写入关系
+  # 관계 기록
   tmp=$(mktemp)
   jq --arg a "$a" --arg b "$b" --arg rel "$rel" '
     .characters[$a].relationships[$rel] = ((.characters[$a].relationships[$rel] // []) + [$b] | unique) |
@@ -113,7 +113,7 @@ cmd_update() {
   ' "$REL_FILE" > "$tmp"
   mv "$tmp" "$REL_FILE"
 
-  # 记录历史（history 优先，否则 relationshipChanges）
+  # 이력 기록 (history 우선, 아니면 relationshipChanges)
   local now=$(date -Iseconds)
   if jq -e '.history' "$REL_FILE" >/dev/null 2>&1; then
     tmp=$(mktemp)
@@ -129,24 +129,24 @@ cmd_update() {
     jq --arg a "$a" --arg b "$b" --arg rel "$rel" '.relationshipChanges += [{type:"update", characters:[$a,$b], relation:$rel}]' "$REL_FILE" > "$tmp" && mv "$tmp" "$REL_FILE"
   fi
 
-  echo "✅ 已更新关系：$a [$rel] $b"
+  echo "✅ 관계 업데이트 완료: $a [$rel] $b"
 }
 
 cmd_history() {
   print_header
   if jq -e '.history' "$REL_FILE" >/dev/null 2>&1; then
-    jq -r '.history[] | "第" + ((.chapter // 0|tostring)) + "章：" + (.changes | map((.characters|join("↔"))+"→"+(.relation // .type)) | join("；"))' "$REL_FILE"
+    jq -r '.history[] | "제" + ((.chapter // 0|tostring)) + "장: " + (.changes | map((.characters|join("↔"))+"→"+(.relation // .type)) | join("; "))' "$REL_FILE"
   elif jq -e '.relationshipChanges' "$REL_FILE" >/dev/null 2>&1; then
     jq -r '.relationshipChanges[] | (.date // "") + " " + (.type // "") + ": " + (.characters|join("↔")) + "→" + (.relation // "")' "$REL_FILE"
   else
-    echo "暂无历史记录"
+    echo "이력 기록 없음"
   fi
 }
 
 cmd_check() {
   print_header
   local issues=0
-  # 检查所有引用角色是否存在于 characters
+  # 모든 참조된 캐릭터가 characters에 존재하는지 확인
   missing=$(jq -r '
     .characters as $c |
     [
@@ -155,12 +155,12 @@ cmd_check() {
     ] | flatten | unique | map(select(has(.) | not))
   ' "$REL_FILE" 2>/dev/null || true)
   if [ -n "$missing" ]; then
-    echo "⚠️  发现未建档角色引用，建议补充："
+    echo "⚠️  등록되지 않은 캐릭터 참조 발견, 보완 권장:"
     echo "$missing"
     issues=1
   fi
   if [ "$issues" -eq 0 ]; then
-    echo "✅ 关系数据检查通过"
+    echo "✅ 관계 데이터 검사 통과"
   fi
 }
 
@@ -169,6 +169,5 @@ case "$CMD" in
   update) cmd_update "$@" ;;
   history) cmd_history ;;
   check) cmd_check ;;
-  *) echo "用法: $0 [show|update|history|check]" >&2; exit 1;;
+  *) echo "사용법: $0 [show|update|history|check]" >&2; exit 1;;
 esac
-

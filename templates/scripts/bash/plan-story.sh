@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 创作计划脚本
-# 用于 /plan 命令
+# 창작 계획 스크립트
+# /plan 명령용
 
 set -e
 
@@ -19,7 +19,7 @@ fi
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 确定故事名称
+# 스토리 이름 결정
 if [ -z "$STORY_NAME" ]; then
     STORY_NAME=$(get_active_story)
 fi
@@ -29,72 +29,72 @@ SPEC_FILE="$STORY_DIR/specification.md"
 CLARIFY_FILE="$STORY_DIR/clarification.md"
 PLAN_FILE="$STORY_DIR/creative-plan.md"
 
-echo "创作计划制定"
+echo "창작 계획 수립"
 echo "============"
-echo "故事：$STORY_NAME"
+echo "스토리: $STORY_NAME"
 echo ""
 
-# 检查前置文档
+# 선행 문서 확인
 missing=()
 
 if [ ! -f ".specify/memory/constitution.md" ]; then
-    missing+=("宪法文件")
+    missing+=("헌법 파일")
 fi
 
 if [ ! -f "$SPEC_FILE" ]; then
-    missing+=("规格文件")
+    missing+=("규격 파일")
 fi
 
 if [ ${#missing[@]} -gt 0 ]; then
-    echo "⚠️ 缺少以下前置文档："
+    echo "⚠️ 다음 선행 문서가 누락됨:"
     for doc in "${missing[@]}"; do
         echo "  - $doc"
     done
     echo ""
-    echo "请先完成："
+    echo "먼저 다음을 완료하세요:"
     if [ ! -f ".specify/memory/constitution.md" ]; then
-        echo "  1. /constitution - 创建创作宪法"
+        echo "  1. /constitution - 창작 헌법 생성"
     fi
     if [ ! -f "$SPEC_FILE" ]; then
-        echo "  2. /specify - 定义故事规格"
+        echo "  2. /specify - 스토리 규격 정의"
     fi
     exit 1
 fi
 
-# 检查是否有未澄清的点
+# 명확화가 필요한 부분이 있는지 확인
 if [ -f "$SPEC_FILE" ]; then
-    unclear_count=$(grep -o '\[需要澄清\]' "$SPEC_FILE" | wc -l | tr -d ' ')
+    unclear_count=$(grep -o '\[명확화 필요\]' "$SPEC_FILE" | wc -l | tr -d ' ')
 
     if [ "$unclear_count" -gt 0 ]; then
-        echo "⚠️ 规格中有 $unclear_count 处需要澄清"
-        echo "建议先运行 /clarify 澄清关键决策"
+        echo "⚠️ 규격에 ${unclear_count}곳이 명확화 필요"
+        echo "먼저 /clarify를 실행하여 핵심 결정을 명확화하는 것을 권장"
         echo ""
     fi
 fi
 
-# 检查澄清记录
+# 명확화 기록 확인
 if [ -f "$CLARIFY_FILE" ]; then
-    echo "✅ 已完成澄清，将基于澄清决策制定计划"
+    echo "✅ 명확화 완료, 명확화 결정을 기반으로 계획 수립"
 else
-    echo "📝 未找到澄清记录，将基于原始规格制定计划"
+    echo "📝 명확화 기록 없음, 원본 규격을 기반으로 계획 수립"
 fi
 
-# 检查计划文件
+# 계획 파일 확인
 if [ -f "$PLAN_FILE" ]; then
     echo ""
-    echo "📋 计划文件已存在，将更新现有计划"
+    echo "📋 계획 파일이 이미 존재, 기존 계획 업데이트"
 
-    # 显示当前版本
-    if grep -q "版本：" "$PLAN_FILE"; then
-        version=$(grep "版本：" "$PLAN_FILE" | head -1 | sed 's/.*版本：//')
-        echo "  当前版本：$version"
+    # 현재 버전 표시
+    if grep -q "버전:" "$PLAN_FILE"; then
+        version=$(grep "버전:" "$PLAN_FILE" | head -1 | sed 's/.*버전://')
+        echo "  현재 버전: $version"
     fi
 else
     echo ""
-    echo "📝 将创建新的创作计划"
+    echo "📝 새 창작 계획 생성 예정"
 fi
 
 echo ""
-echo "计划文件路径：$PLAN_FILE"
+echo "계획 파일 경로: $PLAN_FILE"
 echo ""
-echo "准备就绪，可以制定创作计划"
+echo "준비 완료, 창작 계획을 수립할 수 있습니다"

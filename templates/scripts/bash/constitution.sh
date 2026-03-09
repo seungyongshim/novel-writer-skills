@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 小说创作宪法管理脚本
-# 用于 /constitution 命令
+# 소설 창작 헌법 관리 스크립트
+# /constitution 명령용
 
 set -e
 
@@ -9,56 +9,56 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# 获取命令参数
+# 명령 매개변수 가져오기
 COMMAND="${1:-check}"
 
 # Get project root
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 定义文件路径
+# 파일 경로 정의
 CONSTITUTION_FILE=".specify/memory/constitution.md"
 
 case "$COMMAND" in
     check)
-        # 检查宪法文件是否存在
+        # 헌법 파일 존재 여부 확인
         if [ -f "$CONSTITUTION_FILE" ]; then
-            echo "✅ 宪法文件已存在：$CONSTITUTION_FILE"
-            # 提取版本信息
-            VERSION=$(grep -E "^- 版本：" "$CONSTITUTION_FILE" 2>/dev/null | cut -d'：' -f2 | tr -d ' ' || echo "未知")
-            UPDATED=$(grep -E "^- 最后修订：" "$CONSTITUTION_FILE" 2>/dev/null | cut -d'：' -f2 | tr -d ' ' || echo "未知")
-            echo "  版本：$VERSION"
-            echo "  最后修订：$UPDATED"
+            echo "✅ 헌법 파일이 이미 존재: $CONSTITUTION_FILE"
+            # 버전 정보 추출
+            VERSION=$(grep -E "^- 버전:" "$CONSTITUTION_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "알 수 없음")
+            UPDATED=$(grep -E "^- 최종 수정:" "$CONSTITUTION_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "알 수 없음")
+            echo "  버전: $VERSION"
+            echo "  최종 수정: $UPDATED"
             exit 0
         else
-            echo "❌ 尚未创建宪法文件"
-            echo "  建议：运行 /constitution 创建创作宪法"
+            echo "❌ 헌법 파일이 아직 생성되지 않음"
+            echo "  제안: /constitution을 실행하여 창작 헌법을 생성하세요"
             exit 1
         fi
         ;;
 
     init)
-        # 初始化宪法文件
+        # 헌법 파일 초기화
         mkdir -p "$(dirname "$CONSTITUTION_FILE")"
 
         if [ -f "$CONSTITUTION_FILE" ]; then
-            echo "宪法文件已存在，准备更新"
+            echo "헌법 파일이 이미 존재, 업데이트 준비"
         else
-            echo "准备创建新的宪法文件"
+            echo "새 헌법 파일 생성 준비"
         fi
         ;;
 
     validate)
-        # 验证宪法文件格式
+        # 헌법 파일 형식 검증
         if [ ! -f "$CONSTITUTION_FILE" ]; then
-            echo "错误：宪法文件不存在"
+            echo "오류: 헌법 파일이 존재하지 않음"
             exit 1
         fi
 
-        echo "验证宪法文件..."
+        echo "헌법 파일 검증 중..."
 
-        # 检查必要章节
-        REQUIRED_SECTIONS=("核心价值观" "质量标准" "创作风格" "内容规范" "读者契约")
+        # 필수 섹션 확인
+        REQUIRED_SECTIONS=("핵심 가치관" "품질 기준" "창작 스타일" "내용 규범" "독자 약속")
         MISSING_SECTIONS=()
 
         for section in "${REQUIRED_SECTIONS[@]}"; do
@@ -68,47 +68,47 @@ case "$COMMAND" in
         done
 
         if [ ${#MISSING_SECTIONS[@]} -gt 0 ]; then
-            echo "⚠️ 缺少以下章节："
+            echo "⚠️ 다음 섹션이 누락됨:"
             for section in "${MISSING_SECTIONS[@]}"; do
                 echo "  - $section"
             done
         else
-            echo "✅ 所有必要章节都存在"
+            echo "✅ 모든 필수 섹션이 존재"
         fi
 
-        # 检查版本信息
-        if grep -q "^- 版本：" "$CONSTITUTION_FILE"; then
-            echo "✅ 版本信息完整"
+        # 버전 정보 확인
+        if grep -q "^- 버전:" "$CONSTITUTION_FILE"; then
+            echo "✅ 버전 정보 완전"
         else
-            echo "⚠️ 缺少版本信息"
+            echo "⚠️ 버전 정보 누락"
         fi
         ;;
 
     export)
-        # 导出宪法摘要
+        # 헌법 요약 내보내기
         if [ ! -f "$CONSTITUTION_FILE" ]; then
-            echo "错误：宪法文件不存在"
+            echo "오류: 헌법 파일이 존재하지 않음"
             exit 1
         fi
 
-        echo "# 创作宪法摘要"
+        echo "# 창작 헌법 요약"
         echo ""
 
-        # 提取核心原则
-        echo "## 核心原则"
-        grep -A 1 "^### 原则" "$CONSTITUTION_FILE" | grep "^**声明**" | cut -d'：' -f2- || echo "（未找到原则声明）"
+        # 핵심 원칙 추출
+        echo "## 핵심 원칙"
+        grep -A 1 "^### 원칙" "$CONSTITUTION_FILE" | grep "^**선언**" | cut -d':' -f2- || echo "(원칙 선언을 찾을 수 없음)"
 
         echo ""
-        echo "## 质量底线"
-        grep -A 1 "^### 标准" "$CONSTITUTION_FILE" | grep "^**要求**" | cut -d'：' -f2- || echo "（未找到质量标准）"
+        echo "## 품질 최저선"
+        grep -A 1 "^### 기준" "$CONSTITUTION_FILE" | grep "^**요구**" | cut -d':' -f2- || echo "(품질 기준을 찾을 수 없음)"
 
         echo ""
-        echo "详细内容请查看：$CONSTITUTION_FILE"
+        echo "자세한 내용은 다음을 참조: $CONSTITUTION_FILE"
         ;;
 
     *)
-        echo "未知命令：$COMMAND"
-        echo "支持的命令：check, init, validate, export"
+        echo "알 수 없는 명령: $COMMAND"
+        echo "지원되는 명령: check, init, validate, export"
         exit 1
         ;;
 esac
